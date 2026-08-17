@@ -1,0 +1,15 @@
+[build]
+  # Pre-built Expo web export — the repo root is already the deployable output,
+  # so there is nothing to compile at deploy time.
+  publish = "."
+  command = ""
+
+[[headers]]
+  for = "/_expo/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
