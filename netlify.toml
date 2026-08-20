@@ -1,8 +1,24 @@
 [build]
-  # Pre-built Expo web export — the repo root is already the deployable output,
-  # so there is nothing to compile at deploy time.
-  publish = "."
-  command = ""
+  command = "npm install && npx expo export --platform web"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[[redirects]]
+  from = "/_expo/*"
+  to = "/_expo/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/assets/*"
+  to = "/assets/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
 
 [[headers]]
   for = "/_expo/static/*"
