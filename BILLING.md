@@ -34,41 +34,59 @@ El límite se aplica en dos capas:
 No hay forma de hacer esto desde la app a propósito — es intencional, para que nadie más pueda
 auto-otorgarse el rol.
 
-## Qué falta para cobrar de verdad (Stripe)
+## Cobros reales (Mercado Pago)
 
-Ahora mismo la pantalla **Planes** (`/upgrade`) muestra los 3 niveles y, al tocar "Suscribirme",
-intenta llamar a una Supabase Edge Function que **todavía no existe** — falla con un mensaje claro
-en vez de simular un pago. Esto es intencional (ver punto 36 del brief: nada de botones que
-aparenten funcionar sin hacerlo).
+La pantalla **Planes** (`/upgrade`) muestra los 3 niveles y, al tocar "Suscribirme", llama a la
+Edge Function `create-subscription`, que crea una suscripción personalizada en Mercado Pago para
+ese usuario (asociada al plan elegido vía `preapproval_plan_id`) y te redirige al checkout
+hospedado por Mercado Pago.
 
-Para dejarlo funcionando de verdad:
+Los 3 planes de suscripción ya están creados a mano en el panel de Mercado Pago (no vía API):
 
-### 1. Cuenta de Stripe (la creas tú — no puedo hacerlo por ti)
+| Plan | Precio | Link de checkout | `preapproval_plan_id` |
+|---|---|---|---|
+| Starter | USD 5/mes | `mpago.la/22eSpk5` | `f537ed3dd7f941659494a7eec8852383` |
+| Growth | USD 10/mes | `mpago.la/1Zz5g7H` | `3ec680fb8fcc4d489ba93f8326ea1f7c` |
+| Unlimited | USD 15/mes | `mpago.la/25Nvt2W` | `603cc5c5570c4ddca0b83aecc1deff98` |
 
-- Crea una cuenta en [stripe.com](https://dashboard.stripe.com/register).
-- En **Product catalog**, crea 3 productos con precio **recurrente mensual**:
-  - Starter — USD 5/mes
-  - Growth — USD 10/mes
-  - Unlimited — USD 15/mes
-- Copia el **Price ID** (`price_...`) de cada uno.
-- En **Developers → API keys**, copia la **Secret key** (`sk_live_...` o `sk_test_...` mientras
-  pruebas).
+Estos IDs no son secretos (identifican el plan, no una cuenta ni un pago) así que están escritos
+directamente en el código de las dos Edge Functions:
 
-### 2. Dos Supabase Edge Functions (te ayudo a escribirlas cuando tengas lo anterior)
+- **`supabase/functions/create-subscription`**: recibe `{ plan, back_url }` del usuario logueado,
+  llama a `POST /preapproval` de Mercado Pago con `preapproval_plan_id`, el `payer_email` del
+  usuario y `external_reference = auth.uid()` (así el webhook sabe a quién actualizar), y devuelve
+  `{ url }` (el `init_point` de Mercado Pago) para redirigir.
+- **`supabase/functions/mercadopago-webhook`**: recibe las notificaciones de Mercado Pago cuando
+  la suscripción se autoriza, se pausa o se cancela; vuelve a consultar la API de Mercado Pago con
+  el ID recibido (nunca confía en el payload de la notificación sola), y actualiza
+  `profiles.plan`, `mp_preapproval_id`, `mp_payer_email` y `plan_renews_at` usando la **service
+  role key** (el único rol que puede escribir esos campos, ver `protect_billing_fields()` en
+  `0009_mercadopago.sql`).
 
-- **`create-checkout-session`**: recibe `{ plan }`, crea una Stripe Checkout Session en modo
-  `subscription` con el Price ID correspondiente, y devuelve `{ url }` para redirigir al usuario.
-- **`stripe-webhook`**: recibe los eventos de Stripe (`checkout.session.completed`,
-  `customer.subscription.updated`, `customer.subscription.deleted`), verifica la firma con el
-  *webhook signing secret*, y actualiza `profiles.plan`, `stripe_customer_id`,
-  `stripe_subscription_id` y `plan_renews_at` usando la **service role key** (el único rol que
-  puede escribir esos campos).
+### 1. Variable de entorno a configurar (la única que falta)
 
-### 3. Variables de entorno
+En Supabase (**Project Settings → Edge Functions → Secrets**), agrega:
+- `MP_ACCESS_TOKEN` — el Access Token de **producción** de tu cuenta de Mercado Pago (Tu negocio →
+  Configuración → Credenciales → Credenciales de producción). Es secreto: no lo pegues en el chat,
+  cópialo directo desde el panel de Mercado Pago al de Supabase.
 
-En Supabase (**Project Settings → Edge Functions → Secrets**):
-- `STRIPE_SECRET_KEY`
-- `STRIPE_WEBHOOK_SECRET`
-- `STRIPE_PRICE_STARTER`, `STRIPE_PRICE_GROWTH`, `STRIPE_PRICE_UNLIMITED`
+### 2. Desplegar las Edge Functions
 
-Cuando tengas la cuenta de Stripe y los Price IDs, avísame y armamos las dos funciones.
+Necesitas la Supabase CLI logueada (`supabase login`, se hace una vez en tu propia terminal) y
+luego:
+```bash
+supabase functions deploy create-subscription
+supabase functions deploy mercadopago-webhook --no-verify-jwt
+```
+(`mercadopago-webhook` lleva `--no-verify-jwt` porque lo llama Mercado Pago, no un usuario
+logueado de la app).
+
+### 3. Registrar el webhook en Mercado Pago
+
+En el panel de Mercado Pago → **Tu negocio → Configuración → Webhooks**, agrega la URL pública de
+`mercadopago-webhook` (Supabase te la muestra al desplegarla, algo como
+`https://TU_PROYECTO.supabase.co/functions/v1/mercadopago-webhook`) y suscríbela a eventos de
+**Suscripciones**.
+
+Con eso, cuando alguien paga en el checkout de Mercado Pago, el webhook actualiza su plan
+automáticamente — sin volver a tocar la base de datos a mano.
