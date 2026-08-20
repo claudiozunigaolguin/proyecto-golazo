@@ -83,8 +83,8 @@ export default function KnockoutStageScreen() {
         {!usesGroups ? (
           <EmptyState
             icon="trophy-outline"
-            title="Este campeonato no usa fase de grupos"
-            description="La fase eliminatoria automática está disponible para campeonatos con sistema 'Grupos + playoffs'."
+            title="Este campeonato no tiene fase eliminatoria"
+            description="La fase eliminatoria automática solo está disponible para campeonatos con sistema 'Grupos + playoffs'."
           />
         ) : knockoutMatches.isLoading ? (
           <LoadingState rows={3} />

@@ -204,6 +204,33 @@ export interface Database {
         Update: Partial<{ name: string; order_number: number }>;
         Relationships: [];
       };
+      clubs: {
+        Row: {
+          id: string;
+          championship_id: string;
+          name: string;
+          short_name: string | null;
+          logo_url: string | null;
+          primary_color: string | null;
+          secondary_color: string | null;
+          created_at: string;
+        };
+        Insert: Partial<{
+          id: string;
+          short_name: string | null;
+          logo_url: string | null;
+          primary_color: string | null;
+          secondary_color: string | null;
+        }> & { championship_id: string; name: string };
+        Update: Partial<{
+          name: string;
+          short_name: string | null;
+          logo_url: string | null;
+          primary_color: string | null;
+          secondary_color: string | null;
+        }>;
+        Relationships: [];
+      };
       teams: {
         Row: {
           id: string;
@@ -216,6 +243,7 @@ export interface Database {
           captain_player_id: string | null;
           coach_name: string | null;
           group_id: string | null;
+          club_id: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -228,6 +256,7 @@ export interface Database {
           coach_name: string | null;
           short_name: string | null;
           group_id: string | null;
+          club_id: string | null;
         }> & { championship_id: string; name: string };
         Update: Partial<{
           name: string;
@@ -238,6 +267,7 @@ export interface Database {
           captain_player_id: string | null;
           coach_name: string | null;
           group_id: string | null;
+          club_id: string | null;
         }>;
         Relationships: [];
       };
@@ -425,6 +455,23 @@ export interface Database {
           team_name: string;
           team_short_name: string | null;
           team_logo_url: string | null;
+          played: number;
+          won: number;
+          drawn: number;
+          lost: number;
+          goals_for: number;
+          goals_against: number;
+          goal_difference: number;
+          points: number;
+        }[];
+      };
+      get_club_standings: {
+        Args: { p_championship_id: string };
+        Returns: {
+          club_id: string;
+          club_name: string;
+          club_short_name: string | null;
+          club_logo_url: string | null;
           played: number;
           won: number;
           drawn: number;

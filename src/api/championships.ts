@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import { generateChampionshipSlug } from '@/lib/slug';
-import { createGroups } from '@/api/groups';
+import { createGroups, createNamedGroups } from '@/api/groups';
+import { LEAGUE_SERIES_NAMES } from '@/types/domain';
 import type { ChampionshipInput } from '@/lib/validations';
 import type { Database } from '@/types/database.types';
 
@@ -91,6 +92,8 @@ export async function createChampionship(
 
   if (input.competitionSystem === 'groups_playoffs' && input.groupCount) {
     await createGroups(data.id, input.groupCount);
+  } else if (input.competitionSystem === 'league_series') {
+    await createNamedGroups(data.id, [...LEAGUE_SERIES_NAMES]);
   }
 
   return data;

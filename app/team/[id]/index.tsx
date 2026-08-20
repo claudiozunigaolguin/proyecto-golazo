@@ -9,6 +9,7 @@ import { usePlayersByTeam } from '@/hooks/usePlayers';
 import { useMatches } from '@/hooks/useMatches';
 import { useStandings } from '@/hooks/useStats';
 import { useGroups } from '@/hooks/useGroups';
+import { useClub } from '@/hooks/useClubs';
 import { useChampionshipRole } from '@/hooks/useChampionshipRole';
 import { pickAndUploadImage, teamLogoPath } from '@/lib/storage';
 import { PLAYER_POSITION_SHORT } from '@/types/domain';
@@ -27,6 +28,7 @@ export default function TeamDetailScreen() {
   const groups = useGroups(championshipId);
   const { isManager } = useChampionshipRole(championshipId);
   const updateTeam = useUpdateTeam(championshipId ?? '', teamId);
+  const club = useClub(team.data?.club_id ?? undefined);
 
   const teamsById = useMemo(() => new Map((teams.data ?? []).map((t) => [t.id, t])), [teams.data]);
 
@@ -66,7 +68,15 @@ export default function TeamDetailScreen() {
           ) : null}
         </View>
 
-        {groups.data && groups.data.length > 0 ? (
+        {t.club_id ? (
+          <View style={styles.section}>
+            <Text style={typography.h3}>Club</Text>
+            <Text style={typography.body}>{club.data?.name ?? '—'}</Text>
+            <Text style={[typography.caption, styles.muted]}>
+              Serie: {groups.data?.find((g) => g.id === t.group_id)?.name ?? '—'}
+            </Text>
+          </View>
+        ) : groups.data && groups.data.length > 0 ? (
           <View style={styles.section}>
             <Text style={typography.h3}>Grupo</Text>
             {isManager ? (

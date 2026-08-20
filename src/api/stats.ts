@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import type {
   ChampionshipStatsRow,
+  ClubStandingRow,
   StandingRow,
   TopAssistRow,
   TopCardRow,
@@ -14,6 +15,14 @@ export async function getStandings(
   const { data, error } = await supabase.rpc('get_standings', {
     p_championship_id: championshipId,
     p_group_id: groupId ?? null,
+  });
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function getClubStandings(championshipId: string): Promise<ClubStandingRow[]> {
+  const { data, error } = await supabase.rpc('get_club_standings', {
+    p_championship_id: championshipId,
   });
   if (error) throw error;
   return data ?? [];

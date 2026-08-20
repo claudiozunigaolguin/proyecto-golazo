@@ -151,7 +151,14 @@ export default function CreateChampionshipScreen() {
           />
 
           <Text style={[typography.caption, styles.label]}>Sistema de competición</Text>
-          <SegmentedOptions options={COMPETITION_OPTIONS} value={competitionSystem} onChange={setCompetitionSystem} />
+          <SegmentedOptions
+            options={COMPETITION_OPTIONS}
+            value={competitionSystem}
+            onChange={(value) => {
+              setCompetitionSystem(value);
+              if (value === 'league_series') setTeamSize('11');
+            }}
+          />
 
           {competitionSystem === 'groups_playoffs' ? (
             <>
@@ -162,6 +169,14 @@ export default function CreateChampionshipScreen() {
                 cada uno. La fase de playoffs posterior a los grupos aún no está implementada.
               </Text>
             </>
+          ) : null}
+
+          {competitionSystem === 'league_series' ? (
+            <Text style={[typography.caption, styles.notice]}>
+              Se crean 4 series fijas: Tercera, Segunda, Senior y Primera. Cada club que agregues
+              jugará las 4 automáticamente, y se calcula además una tabla general que suma los
+              puntos de sus 4 equipos.
+            </Text>
           ) : null}
 
           {(competitionSystem === 'knockout' || competitionSystem === 'league_playoffs') ? (
