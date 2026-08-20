@@ -6,6 +6,7 @@ import type {
   MatchStatus,
   MemberRole,
   PlayerPosition,
+  UserPlan,
 } from './domain';
 
 export interface Database {
@@ -19,6 +20,11 @@ export interface Database {
           email: string;
           phone: string | null;
           avatar_url: string | null;
+          is_super_admin: boolean;
+          plan: UserPlan;
+          plan_renews_at: string | null;
+          stripe_customer_id: string | null;
+          stripe_subscription_id: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -35,6 +41,10 @@ export interface Database {
           last_name: string;
           phone: string | null;
           avatar_url: string | null;
+          plan: UserPlan;
+          plan_renews_at: string | null;
+          stripe_customer_id: string | null;
+          stripe_subscription_id: string | null;
         }>;
         Relationships: [];
       };
@@ -65,6 +75,8 @@ export interface Database {
           is_public: boolean;
           slug: string;
           group_count: number | null;
+          name_locked: boolean;
+          delete_locked: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -392,6 +404,20 @@ export interface Database {
       cards: { Row: Database['public']['Tables']['match_events']['Row']; Relationships: [] };
     };
     Functions: {
+      get_my_billing_status: {
+        Args: Record<string, never>;
+        Returns: {
+          plan: UserPlan;
+          is_super_admin: boolean;
+          championship_count: number;
+          championship_limit: number | null;
+          plan_renews_at: string | null;
+        }[];
+      };
+      get_championship_limit: {
+        Args: { p_user_id: string };
+        Returns: number | null;
+      };
       get_standings: {
         Args: { p_championship_id: string; p_group_id?: string | null };
         Returns: {

@@ -143,13 +143,20 @@ export default function ChampionshipAdminScreen() {
 
         <View style={styles.section}>
           <Text style={typography.h3}>Eliminar campeonato</Text>
-          <AdminAction
-            icon="trash-outline"
-            label="Eliminar campeonato"
-            description="Acción permanente, no se puede deshacer"
-            onPress={handleDelete}
-            danger
-          />
+          {championship.data.delete_locked ? (
+            <Text style={[typography.caption, styles.muted]}>
+              Este es tu campeonato del plan gratuito y no se puede eliminar (evita reciclar el
+              cupo). Mejora tu plan para crear campeonatos adicionales.
+            </Text>
+          ) : (
+            <AdminAction
+              icon="trash-outline"
+              label="Eliminar campeonato"
+              description="Acción permanente, no se puede deshacer"
+              onPress={handleDelete}
+              danger
+            />
+          )}
         </View>
       </ScrollView>
     </View>

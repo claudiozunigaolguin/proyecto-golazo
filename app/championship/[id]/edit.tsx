@@ -65,7 +65,17 @@ export default function EditChampionshipScreen() {
     <>
       <Stack.Screen options={{ headerShown: true, title: 'Editar campeonato' }} />
       <ScrollView style={styles.flex} contentContainerStyle={styles.container}>
-        <TextField label="Nombre" value={name} onChangeText={setName} />
+        <TextField
+          label="Nombre"
+          value={name}
+          onChangeText={setName}
+          editable={!championship.data.name_locked}
+        />
+        {championship.data.name_locked ? (
+          <Text style={[typography.caption, styles.muted]}>
+            No puedes renombrar tu campeonato del plan gratuito.
+          </Text>
+        ) : null}
         <TextField label="Nombre corto" value={shortName} onChangeText={setShortName} />
         <TextField label="Temporada" value={season} onChangeText={setSeason} />
         <TextField label="Descripción" value={description} onChangeText={setDescription} multiline numberOfLines={3} />
@@ -100,6 +110,9 @@ export default function EditChampionshipScreen() {
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: colors.background },
   flex1: { flex: 1 },
+  muted: {
+    color: colors.textSecondary,
+  },
   container: {
     padding: spacing.xl,
     gap: spacing.lg,

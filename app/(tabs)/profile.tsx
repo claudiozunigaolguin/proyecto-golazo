@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { router } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Avatar, Button, Card, TextField } from '@/components/ui';
+import { Avatar, Badge, Button, Card, TextField } from '@/components/ui';
 import { LoadingState } from '@/components/ui/Skeleton';
 import { TournamentCard } from '@/components/golazo';
 import { useAuthStore } from '@/store/authStore';
 import { useMyChampionships } from '@/hooks/useChampionships';
+import { useMyBillingStatus } from '@/hooks/useBilling';
 import { updateProfile } from '@/api/profile';
+import { PLAN_LABEL } from '@/types/domain';
 import { colors, spacing, typography } from '@/theme';
 
 export default function ProfileScreen() {
@@ -15,6 +17,7 @@ export default function ProfileScreen() {
   const signOut = useAuthStore((s) => s.signOut);
   const refreshProfile = useAuthStore((s) => s.refreshProfile);
   const myChampionships = useMyChampionships(session?.user.id);
+  const billing = useMyBillingStatus();
 
   const [editing, setEditing] = useState(false);
   const [firstName, setFirstName] = useState(profile?.first_name ?? '');
@@ -69,6 +72,28 @@ export default function ProfileScreen() {
         )}
       </Card>
 
+      <Card style={styles.planCard}>
+        <View style={styles.planRow}>
+          <View>
+            <Text style={typography.h3}>Tu plan</Text>
+            {billing.data ? (
+              <Text style={[typography.caption, styles.muted]}>
+                {billing.data.isSuperAdmin
+                  ? 'Super administrador'
+                  : `${billing.data.championshipCount} de ${billing.data.championshipLimit ?? '∞'} campeonatos`}
+              </Text>
+            ) : null}
+          </View>
+          <Badge
+            label={billing.data?.isSuperAdmin ? 'Super Admin' : PLAN_LABEL[billing.data?.plan ?? 'free']}
+            tone="primary"
+          />
+        </View>
+        {!billing.data?.isSuperAdmin ? (
+          <Button label="Ver planes" variant="secondary" onPress={() => router.push('/upgrade')} fullWidth />
+        ) : null}
+      </Card>
+
       <View style={styles.section}>
         <Text style={typography.h3}>Administrar</Text>
         <Text style={[typography.caption, styles.muted]}>
@@ -118,6 +143,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-end',
     gap: spacing.sm,
+  },
+  planCard: {
+    gap: spacing.md,
+  },
+  planRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   muted: {
     color: colors.textSecondary,

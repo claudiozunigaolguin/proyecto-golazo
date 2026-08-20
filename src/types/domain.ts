@@ -8,6 +8,29 @@ export type ChampionshipStatus = 'upcoming' | 'ongoing' | 'finished';
 
 export type MemberRole = 'admin' | 'organizer';
 
+export type UserPlan = 'free' | 'starter' | 'growth' | 'unlimited';
+
+export const PLAN_LABEL: Record<UserPlan, string> = {
+  free: 'Gratis',
+  starter: 'Starter',
+  growth: 'Growth',
+  unlimited: 'Ilimitado',
+};
+
+export const PLAN_LIMIT: Record<UserPlan, number | null> = {
+  free: 1,
+  starter: 10,
+  growth: 30,
+  unlimited: null,
+};
+
+export const PLAN_PRICE_USD: Record<UserPlan, number> = {
+  free: 0,
+  starter: 5,
+  growth: 10,
+  unlimited: 15,
+};
+
 export type MatchStatus = 'scheduled' | 'live' | 'finished' | 'suspended' | 'cancelled';
 
 export type MatchStage = 'group' | 'knockout';
