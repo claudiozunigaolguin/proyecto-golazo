@@ -15,6 +15,13 @@
   to = "/assets/:splat"
   status = 200
 
+# Enlaces viejos compartidos como /campeonato/:slug (formato anterior) siguen
+# funcionando, redirigiendo a la ruta pública real /public/:slug.
+[[redirects]]
+  from = "/campeonato/*"
+  to = "/public/:splat"
+  status = 302
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
