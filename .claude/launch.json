@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "golazo-web",
+      "runtimeExecutable": "C:\\Program Files\\nodejs\\node.exe",
+      "runtimeArgs": ["node_modules/expo/bin/cli", "start", "--web"],
+      "port": 8081
+    },
+    {
+      "name": "golazo-static-dist",
+      "runtimeExecutable": "C:\\Program Files\\nodejs\\node.exe",
+      "runtimeArgs": ["node_modules/serve/build/main.js", "dist", "-l", "8082"],
+      "port": 8082
+    }
+  ]
+}
