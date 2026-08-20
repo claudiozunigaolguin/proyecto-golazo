@@ -12,7 +12,14 @@ export async function createCheckoutSession(plan: UserPlan): Promise<{ url: stri
     body: { plan, back_url: backUrl },
   });
   if (error) {
-    throw new Error('No pudimos iniciar el pago. Intenta de nuevo en unos minutos.');
+    const context = (error as { context?: Response }).context;
+    let detail: string | undefined;
+    try {
+      detail = context ? ((await context.clone().json()) as { error?: string }).error : undefined;
+    } catch {
+      // La respuesta no era JSON; seguimos con el mensaje genérico.
+    }
+    throw new Error(detail ?? 'No pudimos iniciar el pago. Intenta de nuevo en unos minutos.');
   }
   return data as { url: string };
 }
