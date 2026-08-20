@@ -1,6 +1,12 @@
 // Recibe las notificaciones de Mercado Pago cuando una suscripción se
 // autoriza, se pausa o se cancela, y actualiza el plan del usuario
-// correspondiente (identificado por external_reference = auth.uid()).
+// correspondiente.
+//
+// El checkout hospedado (ver create-subscription) no permite mandar
+// external_reference, así que la primera vez que se autoriza una
+// suscripción identificamos al usuario por su email (preapproval.payer_email
+// contra profiles.email); de ahí en adelante ya queda enlazado por
+// mp_preapproval_id, que es estable.
 //
 // Configurar esta URL como webhook en el panel de Mercado Pago
 // (Tu negocio → Configuración → Webhooks), suscrita a eventos de tipo
@@ -50,12 +56,13 @@ Deno.serve(async (req) => {
     }
     const preapproval = await mpResponse.json();
 
-    const userId: string | undefined = preapproval.external_reference;
+    const externalReference: string | undefined = preapproval.external_reference || undefined;
+    const payerEmail: string | undefined = preapproval.payer_email || undefined;
     const status: string = preapproval.status;
     const plan = PLAN_BY_PREAPPROVAL_PLAN_ID[preapproval.preapproval_plan_id as string];
 
-    if (!userId || !plan) {
-      console.error('Suscripción sin external_reference o plan reconocible', preapproval);
+    if (!plan || (!externalReference && !payerEmail)) {
+      console.error('Suscripción sin referencia de usuario o plan reconocible', preapproval);
       return new Response('ok', { status: 200 });
     }
 
@@ -65,23 +72,21 @@ Deno.serve(async (req) => {
     );
 
     if (status === 'authorized') {
-      await supabase
-        .from('profiles')
-        .update({
-          plan,
-          mp_preapproval_id: preapproval.id,
-          mp_payer_email: preapproval.payer_email ?? null,
-          plan_renews_at: preapproval.next_payment_date ?? null,
-        })
-        .eq('id', userId);
+      const update = {
+        plan,
+        mp_preapproval_id: preapproval.id,
+        mp_payer_email: payerEmail ?? null,
+        plan_renews_at: preapproval.next_payment_date ?? null,
+      };
+      if (externalReference) {
+        await supabase.from('profiles').update(update).eq('id', externalReference);
+      } else {
+        await supabase.from('profiles').update(update).ilike('email', payerEmail!);
+      }
     } else if (status === 'cancelled' || status === 'paused') {
       await supabase
         .from('profiles')
-        .update({
-          plan: 'free',
-          plan_renews_at: null,
-        })
-        .eq('id', userId)
+        .update({ plan: 'free', plan_renews_at: null })
         .eq('mp_preapproval_id', preapproval.id);
     }
 
