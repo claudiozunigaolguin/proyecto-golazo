@@ -22,6 +22,8 @@ decisiones de diseño. Ver [DEPLOYMENT.md](./DEPLOYMENT.md) para publicar en App
    - `0003_rls.sql`
    - `0004_storage.sql` (bucket para escudos de equipo y fotos de jugador)
    - `0005_groups.sql` (fase de grupos para el sistema "Grupos + playoffs")
+   - `0006_knockout.sql` (fase eliminatoria / playoffs)
+   - `0007_billing.sql` (super admin, planes y límite de campeonatos — ver [BILLING.md](./BILLING.md))
 3. En **Project Settings → API**, copia la `Project URL` y la `anon public key`.
 4. Copia `.env.example` a `.env` y completa:
    ```

@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { router, Stack } from 'expo-router';
 import { ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
-import { Button, SegmentedOptions, TextField } from '@/components/ui';
+import { Button, EmptyState, SegmentedOptions, TextField } from '@/components/ui';
+import { LoadingState } from '@/components/ui/Skeleton';
 import { useAuthStore } from '@/store/authStore';
 import { useCreateChampionship } from '@/hooks/useChampionships';
+import { useMyBillingStatus } from '@/hooks/useBilling';
 import { championshipSchema } from '@/lib/validations';
 import { COMPETITION_SYSTEM_LABEL, type CompetitionSystem } from '@/types/domain';
 import { colors, spacing, typography } from '@/theme';
@@ -18,6 +20,7 @@ const GROUP_COUNT_OPTIONS = ['2', '3', '4', '6', '8'].map((v) => ({ value: v, la
 export default function CreateChampionshipScreen() {
   const userId = useAuthStore((s) => s.session?.user.id);
   const createChampionship = useCreateChampionship();
+  const billing = useMyBillingStatus();
 
   const [name, setName] = useState('');
   const [shortName, setShortName] = useState('');
@@ -70,6 +73,40 @@ export default function CreateChampionshipScreen() {
       setError(e instanceof Error ? e.message : 'No pudimos crear el campeonato');
     }
   };
+
+  if (billing.isLoading) {
+    return (
+      <>
+        <Stack.Screen options={{ headerShown: true, title: 'Crear campeonato' }} />
+        <View style={styles.flex}>
+          <LoadingState rows={4} />
+        </View>
+      </>
+    );
+  }
+
+  const atLimit =
+    billing.data &&
+    !billing.data.isSuperAdmin &&
+    billing.data.championshipLimit !== null &&
+    billing.data.championshipCount >= billing.data.championshipLimit;
+
+  if (atLimit) {
+    return (
+      <>
+        <Stack.Screen options={{ headerShown: true, title: 'Crear campeonato' }} />
+        <View style={styles.flex}>
+          <EmptyState
+            icon="lock-closed-outline"
+            title="Llegaste al límite de tu plan"
+            description={`Tu plan actual permite ${billing.data!.championshipLimit} campeonato${billing.data!.championshipLimit === 1 ? '' : 's'}. Mejora tu plan para crear más.`}
+            actionLabel="Ver planes"
+            onAction={() => router.push('/upgrade')}
+          />
+        </View>
+      </>
+    );
+  }
 
   return (
     <>
