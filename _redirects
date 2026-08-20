@@ -1,8 +1,0 @@
-/_expo/*   /_expo/:splat   200
-/assets/*  /assets/:splat  200
-
-# Older share links pointed at /campeonato/:slug, which is not a route in the
-# app. Send them to the real public championship route so they keep working.
-/campeonato/*  /public/:splat  302
-
-/*         /index.html     200
