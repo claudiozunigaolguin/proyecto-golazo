@@ -23,8 +23,8 @@ export interface Database {
           is_super_admin: boolean;
           plan: UserPlan;
           plan_renews_at: string | null;
-          stripe_customer_id: string | null;
-          stripe_subscription_id: string | null;
+          mp_preapproval_id: string | null;
+          mp_payer_email: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -43,8 +43,8 @@ export interface Database {
           avatar_url: string | null;
           plan: UserPlan;
           plan_renews_at: string | null;
-          stripe_customer_id: string | null;
-          stripe_subscription_id: string | null;
+          mp_preapproval_id: string | null;
+          mp_payer_email: string | null;
         }>;
         Relationships: [];
       };
