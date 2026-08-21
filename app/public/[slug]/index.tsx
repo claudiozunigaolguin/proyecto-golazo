@@ -96,7 +96,7 @@ export default function PublicChampionshipScreen() {
           <Button label={copied ? '¡Copiado!' : 'Copiar enlace'} variant="secondary" size="sm" onPress={() => void handleCopy()} />
         </View>
         <View style={styles.qrWrap}>
-          <QRCode value={publicUrl} size={120} color={colors.textPrimary} backgroundColor={colors.background} />
+          <QRCode value={publicUrl} size={120} color={colors.textPrimary} backgroundColor={colors.card} />
         </View>
       </Card>
 

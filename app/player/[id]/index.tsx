@@ -82,7 +82,7 @@ export default function PlayerDetailScreen() {
           <Text style={typography.h3}>Ficha pública</Text>
           <Text style={[typography.caption, styles.muted]}>{athlete.public_code}</Text>
           <View style={styles.qrWrap}>
-            <QRCode value={publicUrl} size={140} color={colors.textPrimary} backgroundColor={colors.background} />
+            <QRCode value={publicUrl} size={140} color={colors.textPrimary} backgroundColor={colors.card} />
           </View>
           <Button label="Compartir ficha" size="sm" onPress={handleShare} />
         </Card>
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
   },
   qrWrap: {
     padding: spacing.md,
-    backgroundColor: colors.background,
+    backgroundColor: colors.card,
     borderRadius: radius.lg,
   },
   muted: {

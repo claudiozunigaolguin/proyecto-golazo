@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
-    backgroundColor: colors.background,
+    backgroundColor: colors.card,
   },
   info: {
     flex: 1,

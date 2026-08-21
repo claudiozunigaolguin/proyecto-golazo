@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     flexGrow: 0,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
-    backgroundColor: colors.background,
+    backgroundColor: colors.card,
   },
   content: {
     paddingHorizontal: spacing.lg,

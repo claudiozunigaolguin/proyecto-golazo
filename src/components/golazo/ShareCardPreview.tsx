@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.85)',
   },
   panel: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.card,
     borderRadius: radius.lg,
     padding: spacing.md,
   },
