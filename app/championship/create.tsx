@@ -1,12 +1,17 @@
 import { useState } from 'react';
 import { router, Stack } from 'expo-router';
-import { ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Image } from 'expo-image';
+import { Ionicons } from '@expo/vector-icons';
+import { Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { Button, EmptyState, SegmentedOptions, TextField } from '@/components/ui';
 import { LoadingState } from '@/components/ui/Skeleton';
 import { useAuthStore } from '@/store/authStore';
 import { useCreateChampionship } from '@/hooks/useChampionships';
 import { useMyBillingStatus } from '@/hooks/useBilling';
+import { updateChampionship as updateChampionshipApi } from '@/api/championships';
 import { championshipSchema } from '@/lib/validations';
+import { pickImage, uploadImage, championshipLogoPath } from '@/lib/storage';
+import type { ImagePickerAsset } from 'expo-image-picker';
 import { COMPETITION_SYSTEM_LABEL, type CompetitionSystem } from '@/types/domain';
 import { colors, spacing, typography } from '@/theme';
 
@@ -38,7 +43,17 @@ export default function CreateChampionshipScreen() {
   const [pointsDraw, setPointsDraw] = useState('1');
   const [pointsLoss, setPointsLoss] = useState('0');
   const [isPublic, setIsPublic] = useState(true);
+  const [logoAsset, setLogoAsset] = useState<ImagePickerAsset | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const handlePickLogo = async () => {
+    try {
+      const asset = await pickImage();
+      if (asset) setLogoAsset(asset);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'No pudimos abrir la galería');
+    }
+  };
 
   const handleSubmit = async () => {
     if (!userId) return;
@@ -70,6 +85,10 @@ export default function CreateChampionshipScreen() {
 
     try {
       const championship = await createChampionship.mutateAsync({ input: parsed.data, ownerId: userId });
+      if (logoAsset) {
+        const logoUrl = await uploadImage(championshipLogoPath(championship.id), logoAsset);
+        await updateChampionshipApi(championship.id, { logo_url: logoUrl });
+      }
       router.replace(`/championship/${championship.id}`);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'No pudimos crear el campeonato');
@@ -116,6 +135,20 @@ export default function CreateChampionshipScreen() {
       <ScrollView style={styles.flex} contentContainerStyle={styles.container}>
         <View style={styles.section}>
           <Text style={typography.h3}>Información general</Text>
+
+          <Pressable onPress={() => void handlePickLogo()} style={styles.logoPicker}>
+            {logoAsset ? (
+              <Image source={{ uri: logoAsset.uri }} style={styles.logoPreview} contentFit="cover" />
+            ) : (
+              <View style={[styles.logoPreview, styles.logoPlaceholder]}>
+                <Ionicons name="shield-outline" size={28} color={colors.primary} />
+              </View>
+            )}
+            <Text style={[typography.caption, styles.logoLabel]}>
+              {logoAsset ? 'Cambiar logo' : 'Agregar logo del campeonato (opcional)'}
+            </Text>
+          </Pressable>
+
           <TextField label="Nombre del campeonato" value={name} onChangeText={setName} placeholder="Liga Golazo 2026" />
           <TextField label="Nombre corto" value={shortName} onChangeText={setShortName} placeholder="LG26" />
           <TextField label="Temporada" value={season} onChangeText={setSeason} placeholder="2026" />
@@ -271,5 +304,23 @@ const styles = StyleSheet.create({
   },
   error: {
     color: colors.danger,
+  },
+  logoPicker: {
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
+  logoPreview: {
+    width: 72,
+    height: 72,
+    borderRadius: 16,
+  },
+  logoPlaceholder: {
+    backgroundColor: colors.primaryLight,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoLabel: {
+    color: colors.primary,
+    fontWeight: '700',
   },
 });
