@@ -3,7 +3,9 @@ import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { Button, TextField } from '@/components/ui';
 import { LoadingState } from '@/components/ui/Skeleton';
+import { EditableAvatar } from '@/components/golazo';
 import { useChampionship, useUpdateChampionship } from '@/hooks/useChampionships';
+import { pickAndUploadImage, championshipLogoPath } from '@/lib/storage';
 import { colors, spacing, typography } from '@/theme';
 
 export default function EditChampionshipScreen() {
@@ -65,6 +67,17 @@ export default function EditChampionshipScreen() {
     <>
       <Stack.Screen options={{ headerShown: true, title: 'Editar campeonato' }} />
       <ScrollView style={styles.flex} contentContainerStyle={styles.container}>
+        <View style={styles.logoRow}>
+          <EditableAvatar
+            uri={championship.data.logo_url}
+            name={championship.data.name}
+            size={88}
+            onPick={() => pickAndUploadImage(championshipLogoPath(championship.data!.id))}
+            onUploaded={(url) => void updateChampionship.mutateAsync({ logo_url: url })}
+          />
+          <Text style={[typography.caption, styles.muted]}>Logo del campeonato</Text>
+        </View>
+
         <TextField
           label="Nombre"
           value={name}
@@ -112,6 +125,10 @@ const styles = StyleSheet.create({
   flex1: { flex: 1 },
   muted: {
     color: colors.textSecondary,
+  },
+  logoRow: {
+    alignItems: 'center',
+    gap: spacing.xs,
   },
   container: {
     padding: spacing.xl,
