@@ -5,6 +5,10 @@ export function getPublicChampionshipUrl(slug: string): string {
   return `https://pentagolazo.app/public/${slug}`;
 }
 
+export function getPublicPlayerUrl(code: string): string {
+  return `https://pentagolazo.app/ficha/${code}`;
+}
+
 export async function shareText(message: string, title?: string): Promise<void> {
   await Share.share({ message, title });
 }

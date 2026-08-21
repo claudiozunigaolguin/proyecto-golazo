@@ -74,13 +74,13 @@ export default function PlayersScreen() {
                         style={styles.playerRow}
                       >
                         <Avatar
-                          uri={player.photo_url}
-                          name={`${player.first_name} ${player.last_name}`}
+                          uri={player.athlete.photo_url}
+                          name={`${player.athlete.first_name} ${player.athlete.last_name}`}
                           size={36}
                         />
                         <View style={styles.playerInfo}>
                           <Text style={typography.bodyBold}>
-                            {player.first_name} {player.last_name}
+                            {player.athlete.first_name} {player.athlete.last_name}
                           </Text>
                           <Text style={[typography.caption, styles.muted]}>
                             {PLAYER_POSITION_SHORT[player.position]}

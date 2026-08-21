@@ -1,10 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import * as api from '@/api/players';
 import type { PlayerInput } from '@/lib/validations';
+import type { ImagePickerAsset } from 'expo-image-picker';
 
 export const playerKeys = {
   byTeam: (teamId: string) => ['players', 'team', teamId] as const,
   byChampionship: (championshipId: string) => ['players', 'championship', championshipId] as const,
+  byAthlete: (athleteId: string) => ['players', 'athlete', athleteId] as const,
   detail: (id: string) => ['players', 'detail', id] as const,
 };
 
@@ -32,6 +34,15 @@ export function usePlayer(id: string | undefined) {
   });
 }
 
+/** "Historial de participaciones": todas las inscripciones del mismo athlete. */
+export function usePlayersByAthlete(athleteId: string | undefined) {
+  return useQuery({
+    queryKey: playerKeys.byAthlete(athleteId ?? ''),
+    queryFn: () => api.listPlayersByAthlete(athleteId as string),
+    enabled: !!athleteId,
+  });
+}
+
 export function usePlayerStats(id: string | undefined) {
   return useQuery({
     queryKey: ['players', 'stats', id ?? ''],
@@ -43,7 +54,8 @@ export function usePlayerStats(id: string | undefined) {
 export function useCreatePlayer(teamId: string, championshipId: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (input: PlayerInput) => api.createPlayer(teamId, championshipId, input),
+    mutationFn: ({ input, photoAsset }: { input: PlayerInput; photoAsset?: ImagePickerAsset | null }) =>
+      api.createPlayer(teamId, championshipId, input, photoAsset),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: playerKeys.byTeam(teamId) });
       void queryClient.invalidateQueries({ queryKey: playerKeys.byChampionship(championshipId) });

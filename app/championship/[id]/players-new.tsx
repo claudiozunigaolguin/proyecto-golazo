@@ -3,13 +3,11 @@ import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { Image } from 'expo-image';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useQueryClient } from '@tanstack/react-query';
 import { Button, SegmentedOptions, TextField } from '@/components/ui';
 import { useTeams } from '@/hooks/useTeams';
-import { useCreatePlayer, playerKeys } from '@/hooks/usePlayers';
-import { updatePlayer as updatePlayerApi } from '@/api/players';
+import { useCreatePlayer } from '@/hooks/usePlayers';
 import { playerSchema } from '@/lib/validations';
-import { pickImage, playerPhotoPath, uploadImage } from '@/lib/storage';
+import { pickImage } from '@/lib/storage';
 import type { ImagePickerAsset } from 'expo-image-picker';
 import { PLAYER_POSITION_LABEL, type PlayerPosition } from '@/types/domain';
 import { colors, spacing, typography } from '@/theme';
@@ -22,13 +20,14 @@ export default function CreatePlayerScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const championshipId = id as string;
   const teams = useTeams(id);
-  const queryClient = useQueryClient();
 
   const [teamId, setTeamId] = useState<string>('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [jerseyNumber, setJerseyNumber] = useState('');
   const [position, setPosition] = useState<PlayerPosition>('mid');
+  const [rut, setRut] = useState('');
+  const [birthDate, setBirthDate] = useState('');
   const [photoAsset, setPhotoAsset] = useState<ImagePickerAsset | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -55,6 +54,8 @@ export default function CreatePlayerScreen() {
       lastName,
       jerseyNumber: jerseyNumber ? Number(jerseyNumber) : undefined,
       position,
+      rut: rut || undefined,
+      birthDate: birthDate || undefined,
     });
     if (!parsed.success) {
       setError(parsed.error.issues[0]?.message ?? 'Revisa los datos del jugador');
@@ -63,13 +64,7 @@ export default function CreatePlayerScreen() {
     setError(null);
     setSubmitting(true);
     try {
-      const player = await createPlayer.mutateAsync(parsed.data);
-      if (photoAsset) {
-        const photoUrl = await uploadImage(playerPhotoPath(championshipId, player.id), photoAsset);
-        await updatePlayerApi(player.id, { photo_url: photoUrl });
-        void queryClient.invalidateQueries({ queryKey: playerKeys.byTeam(selectedTeamId) });
-        void queryClient.invalidateQueries({ queryKey: playerKeys.byChampionship(championshipId) });
-      }
+      await createPlayer.mutateAsync({ input: parsed.data, photoAsset });
       router.back();
     } catch (e) {
       setError(e instanceof Error ? e.message : 'No pudimos agregar al jugador');
@@ -110,6 +105,22 @@ export default function CreatePlayerScreen() {
           onChangeText={setJerseyNumber}
           keyboardType="number-pad"
         />
+        <TextField
+          label="RUT (opcional)"
+          value={rut}
+          onChangeText={setRut}
+          placeholder="12.345.678-9"
+        />
+        <Text style={[typography.caption, styles.notice]}>
+          Si el RUT ya está registrado, se reutiliza la ficha existente del jugador en vez de
+          crear una nueva.
+        </Text>
+        <TextField
+          label="Fecha de nacimiento (opcional)"
+          value={birthDate}
+          onChangeText={setBirthDate}
+          placeholder="AAAA-MM-DD"
+        />
 
         <Text style={typography.caption}>Posición</Text>
         <SegmentedOptions options={POSITION_OPTIONS} value={position} onChange={setPosition} />
@@ -148,5 +159,8 @@ const styles = StyleSheet.create({
   },
   error: {
     color: colors.danger,
+  },
+  notice: {
+    color: colors.textSecondary,
   },
 });

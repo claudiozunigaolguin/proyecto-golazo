@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { isValidRut } from '@/lib/rut';
 
 export const registerSchema = z
   .object({
@@ -75,6 +76,12 @@ export const playerSchema = z.object({
   lastName: z.string().trim().min(1, 'Ingresa el apellido'),
   jerseyNumber: z.number().int().min(0).max(99).optional(),
   position: z.enum(['gk', 'def', 'mid', 'fwd']),
+  rut: z
+    .string()
+    .trim()
+    .optional()
+    .refine((v) => !v || isValidRut(v), 'RUT inválido'),
+  birthDate: z.string().optional(),
 });
 
 export type PlayerInput = z.infer<typeof playerSchema>;

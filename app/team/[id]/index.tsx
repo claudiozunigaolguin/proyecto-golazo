@@ -128,10 +128,10 @@ export default function TeamDetailScreen() {
                   onPress={() => router.push(`/player/${p.id}`)}
                   style={styles.playerRow}
                 >
-                  <Avatar uri={p.photo_url} name={`${p.first_name} ${p.last_name}`} size={36} />
+                  <Avatar uri={p.athlete.photo_url} name={`${p.athlete.first_name} ${p.athlete.last_name}`} size={36} />
                   <View style={styles.playerInfo}>
                     <Text style={typography.bodyBold}>
-                      {p.first_name} {p.last_name}
+                      {p.athlete.first_name} {p.athlete.last_name}
                     </Text>
                     <Text style={[typography.caption, styles.muted]}>
                       {PLAYER_POSITION_SHORT[p.position]}

@@ -66,3 +66,7 @@ export function teamLogoPath(championshipId: string, teamId: string): string {
 export function playerPhotoPath(championshipId: string, playerId: string): string {
   return `player-photos/${championshipId}/${playerId}`;
 }
+
+export function athletePhotoPath(athleteId: string): string {
+  return `athlete-photos/${athleteId}/photo`;
+}

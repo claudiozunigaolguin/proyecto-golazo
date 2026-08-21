@@ -7,6 +7,7 @@ import { EventItem, TeamLogo } from '@/components/golazo';
 import { useMatch, useSaveMatchResult, useStartLiveMatch } from '@/hooks/useMatches';
 import { useTeam } from '@/hooks/useTeams';
 import { usePlayersByTeam } from '@/hooks/usePlayers';
+import type { Player } from '@/api/players';
 import { useAddMatchEvent, useDeleteMatchEvent, useMatchEvents } from '@/hooks/useEvents';
 import { useChampionshipRole } from '@/hooks/useChampionshipRole';
 import { useAuthStore } from '@/store/authStore';
@@ -51,7 +52,7 @@ export default function MatchDetailScreen() {
   const selectedTeamId = eventTeam === 'home' ? match.data?.home_team_id : match.data?.away_team_id;
 
   const playersById = useMemo(() => {
-    const map = new Map<string, { first_name: string; last_name: string }>();
+    const map = new Map<string, Player>();
     for (const p of [...(homePlayers.data ?? []), ...(awayPlayers.data ?? [])]) map.set(p.id, p);
     return map;
   }, [homePlayers.data, awayPlayers.data]);
@@ -209,7 +210,7 @@ export default function MatchDetailScreen() {
                       <EventItem
                         type={ev.type}
                         minute={ev.minute}
-                        playerName={evPlayer ? `${evPlayer.first_name} ${evPlayer.last_name}` : undefined}
+                        playerName={evPlayer ? `${evPlayer.athlete.first_name} ${evPlayer.athlete.last_name}` : undefined}
                         teamName={evTeam?.name}
                       />
                     </View>
@@ -245,7 +246,7 @@ export default function MatchDetailScreen() {
             <SegmentedOptions
               options={(eventTeamPlayers.data ?? []).map((p) => ({
                 value: p.id,
-                label: `#${p.jersey_number ?? '-'} ${p.last_name}`,
+                label: `#${p.jersey_number ?? '-'} ${p.athlete.last_name}`,
               }))}
               value={eventPlayerId}
               onChange={setEventPlayerId}

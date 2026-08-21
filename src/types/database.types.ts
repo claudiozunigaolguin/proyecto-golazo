@@ -271,39 +271,53 @@ export interface Database {
         }>;
         Relationships: [];
       };
+      athletes: {
+        Row: {
+          id: string;
+          first_name: string;
+          last_name: string;
+          birth_date: string | null;
+          photo_url: string | null;
+          public_code: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<{
+          id: string;
+          birth_date: string | null;
+          photo_url: string | null;
+        }> & { first_name: string; last_name: string };
+        Update: Partial<{
+          first_name: string;
+          last_name: string;
+          birth_date: string | null;
+          photo_url: string | null;
+        }>;
+        Relationships: [];
+      };
       players: {
         Row: {
           id: string;
           team_id: string;
           championship_id: string;
-          first_name: string;
-          last_name: string;
+          athlete_id: string;
           jersey_number: number | null;
-          photo_url: string | null;
           position: PlayerPosition;
-          birth_date: string | null;
           created_at: string;
           updated_at: string;
         };
         Insert: Partial<{
           id: string;
           jersey_number: number | null;
-          photo_url: string | null;
-          birth_date: string | null;
         }> & {
           team_id: string;
           championship_id: string;
-          first_name: string;
-          last_name: string;
+          athlete_id: string;
           position: PlayerPosition;
         };
         Update: Partial<{
-          first_name: string;
-          last_name: string;
           jersey_number: number | null;
-          photo_url: string | null;
           position: PlayerPosition;
-          birth_date: string | null;
           team_id: string;
         }>;
         Relationships: [];
@@ -434,6 +448,20 @@ export interface Database {
       cards: { Row: Database['public']['Tables']['match_events']['Row']; Relationships: [] };
     };
     Functions: {
+      find_or_create_athlete: {
+        Args: {
+          p_rut: string | null;
+          p_first_name: string;
+          p_last_name: string;
+          p_birth_date?: string | null;
+          p_photo_url?: string | null;
+        };
+        Returns: string;
+      };
+      get_athlete_rut: {
+        Args: { p_athlete_id: string };
+        Returns: string | null;
+      };
       get_my_billing_status: {
         Args: Record<string, never>;
         Returns: {
