@@ -2,7 +2,11 @@ export type CompetitionSystem =
   | 'round_robin'
   | 'groups_playoffs'
   | 'knockout'
-  | 'league_playoffs';
+  | 'league_playoffs'
+  | 'league_series';
+
+/** Series fijas de una "Liga con series" (competition_system = 'league_series'). */
+export const LEAGUE_SERIES_NAMES = ['Tercera', 'Segunda', 'Senior', 'Primera'] as const;
 
 export type ChampionshipStatus = 'upcoming' | 'ongoing' | 'finished';
 
@@ -51,6 +55,7 @@ export const COMPETITION_SYSTEM_LABEL: Record<CompetitionSystem, string> = {
   groups_playoffs: 'Grupos + playoffs',
   knockout: 'Eliminación directa',
   league_playoffs: 'Liga + playoffs',
+  league_series: 'Liga con series',
 };
 
 export const CHAMPIONSHIP_STATUS_LABEL: Record<ChampionshipStatus, string> = {
@@ -86,6 +91,21 @@ export interface StandingRow {
   team_name: string;
   team_short_name: string | null;
   team_logo_url: string | null;
+  played: number;
+  won: number;
+  drawn: number;
+  lost: number;
+  goals_for: number;
+  goals_against: number;
+  goal_difference: number;
+  points: number;
+}
+
+export interface ClubStandingRow {
+  club_id: string;
+  club_name: string;
+  club_short_name: string | null;
+  club_logo_url: string | null;
   played: number;
   won: number;
   drawn: number;

@@ -204,6 +204,33 @@ export interface Database {
         Update: Partial<{ name: string; order_number: number }>;
         Relationships: [];
       };
+      clubs: {
+        Row: {
+          id: string;
+          championship_id: string;
+          name: string;
+          short_name: string | null;
+          logo_url: string | null;
+          primary_color: string | null;
+          secondary_color: string | null;
+          created_at: string;
+        };
+        Insert: Partial<{
+          id: string;
+          short_name: string | null;
+          logo_url: string | null;
+          primary_color: string | null;
+          secondary_color: string | null;
+        }> & { championship_id: string; name: string };
+        Update: Partial<{
+          name: string;
+          short_name: string | null;
+          logo_url: string | null;
+          primary_color: string | null;
+          secondary_color: string | null;
+        }>;
+        Relationships: [];
+      };
       teams: {
         Row: {
           id: string;
@@ -216,6 +243,7 @@ export interface Database {
           captain_player_id: string | null;
           coach_name: string | null;
           group_id: string | null;
+          club_id: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -228,6 +256,7 @@ export interface Database {
           coach_name: string | null;
           short_name: string | null;
           group_id: string | null;
+          club_id: string | null;
         }> & { championship_id: string; name: string };
         Update: Partial<{
           name: string;
@@ -238,6 +267,31 @@ export interface Database {
           captain_player_id: string | null;
           coach_name: string | null;
           group_id: string | null;
+          club_id: string | null;
+        }>;
+        Relationships: [];
+      };
+      athletes: {
+        Row: {
+          id: string;
+          first_name: string;
+          last_name: string;
+          birth_date: string | null;
+          photo_url: string | null;
+          public_code: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<{
+          id: string;
+          birth_date: string | null;
+          photo_url: string | null;
+        }> & { first_name: string; last_name: string };
+        Update: Partial<{
+          first_name: string;
+          last_name: string;
+          birth_date: string | null;
+          photo_url: string | null;
         }>;
         Relationships: [];
       };
@@ -246,34 +300,24 @@ export interface Database {
           id: string;
           team_id: string;
           championship_id: string;
-          first_name: string;
-          last_name: string;
+          athlete_id: string;
           jersey_number: number | null;
-          photo_url: string | null;
           position: PlayerPosition;
-          birth_date: string | null;
           created_at: string;
           updated_at: string;
         };
         Insert: Partial<{
           id: string;
           jersey_number: number | null;
-          photo_url: string | null;
-          birth_date: string | null;
         }> & {
           team_id: string;
           championship_id: string;
-          first_name: string;
-          last_name: string;
+          athlete_id: string;
           position: PlayerPosition;
         };
         Update: Partial<{
-          first_name: string;
-          last_name: string;
           jersey_number: number | null;
-          photo_url: string | null;
           position: PlayerPosition;
-          birth_date: string | null;
           team_id: string;
         }>;
         Relationships: [];
@@ -404,6 +448,20 @@ export interface Database {
       cards: { Row: Database['public']['Tables']['match_events']['Row']; Relationships: [] };
     };
     Functions: {
+      find_or_create_athlete: {
+        Args: {
+          p_rut: string | null;
+          p_first_name: string;
+          p_last_name: string;
+          p_birth_date?: string | null;
+          p_photo_url?: string | null;
+        };
+        Returns: string;
+      };
+      get_athlete_rut: {
+        Args: { p_athlete_id: string };
+        Returns: string | null;
+      };
       get_my_billing_status: {
         Args: Record<string, never>;
         Returns: {
@@ -425,6 +483,23 @@ export interface Database {
           team_name: string;
           team_short_name: string | null;
           team_logo_url: string | null;
+          played: number;
+          won: number;
+          drawn: number;
+          lost: number;
+          goals_for: number;
+          goals_against: number;
+          goal_difference: number;
+          points: number;
+        }[];
+      };
+      get_club_standings: {
+        Args: { p_championship_id: string };
+        Returns: {
+          club_id: string;
+          club_name: string;
+          club_short_name: string | null;
+          club_logo_url: string | null;
           played: number;
           won: number;
           drawn: number;

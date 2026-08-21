@@ -1,53 +1,100 @@
 import { supabase } from '@/lib/supabase';
+import { findOrCreateAthlete } from '@/api/athletes';
+import { athletePhotoPath, uploadImage } from '@/lib/storage';
 import type { PlayerInput } from '@/lib/validations';
+import type { ImagePickerAsset } from 'expo-image-picker';
+import type { Athlete } from '@/api/athletes';
 import type { Database } from '@/types/database.types';
 
-export type Player = Database['public']['Tables']['players']['Row'];
+export type PlayerRow = Database['public']['Tables']['players']['Row'];
+export type Player = PlayerRow & { athlete: Athlete };
+
+const PLAYER_SELECT = '*, athlete:athletes(*)';
 
 export async function listPlayersByTeam(teamId: string): Promise<Player[]> {
   const { data, error } = await supabase
     .from('players')
-    .select('*')
+    .select(PLAYER_SELECT)
     .eq('team_id', teamId)
     .order('jersey_number', { ascending: true, nullsFirst: false });
   if (error) throw error;
-  return data ?? [];
+  return (data ?? []) as unknown as Player[];
 }
 
 export async function listPlayersByChampionship(championshipId: string): Promise<Player[]> {
   const { data, error } = await supabase
     .from('players')
-    .select('*')
+    .select(PLAYER_SELECT)
     .eq('championship_id', championshipId);
   if (error) throw error;
-  return data ?? [];
+  return (data ?? []) as unknown as Player[];
+}
+
+export type PlayerEnrollment = Player & {
+  team: { name: string };
+  championship: { name: string };
+};
+
+/** Todas las inscripciones (equipo + campeonato) del mismo athlete — "historial de participaciones". */
+export async function listPlayersByAthlete(athleteId: string): Promise<PlayerEnrollment[]> {
+  const { data, error } = await supabase
+    .from('players')
+    .select('*, athlete:athletes(*), team:teams(name), championship:championships(name)')
+    .eq('athlete_id', athleteId);
+  if (error) throw error;
+  return (data ?? []) as unknown as PlayerEnrollment[];
 }
 
 export async function getPlayerById(id: string): Promise<Player | null> {
-  const { data, error } = await supabase.from('players').select('*').eq('id', id).maybeSingle();
+  const { data, error } = await supabase
+    .from('players')
+    .select(PLAYER_SELECT)
+    .eq('id', id)
+    .maybeSingle();
   if (error) throw error;
-  return data;
+  return data as unknown as Player | null;
 }
 
+/**
+ * Resuelve (o crea) el athlete correspondiente al RUT/nombre ingresados,
+ * sube la foto si se picó una, y recién ahí crea la inscripción del
+ * jugador en el equipo/campeonato.
+ */
 export async function createPlayer(
   teamId: string,
   championshipId: string,
-  input: PlayerInput
+  input: PlayerInput,
+  photoAsset?: ImagePickerAsset | null
 ): Promise<Player> {
+  const athleteId = await findOrCreateAthlete({
+    rut: input.rut,
+    firstName: input.firstName,
+    lastName: input.lastName,
+    birthDate: input.birthDate,
+  });
+
+  if (photoAsset) {
+    const photoUrl = await uploadImage(athletePhotoPath(athleteId), photoAsset);
+    const { error: photoError } = await supabase
+      .from('athletes')
+      .update({ photo_url: photoUrl })
+      .eq('id', athleteId);
+    if (photoError) throw photoError;
+  }
+
   const { data, error } = await supabase
     .from('players')
     .insert({
       team_id: teamId,
       championship_id: championshipId,
-      first_name: input.firstName,
-      last_name: input.lastName,
+      athlete_id: athleteId,
       jersey_number: input.jerseyNumber ?? null,
       position: input.position,
     })
-    .select('*')
+    .select(PLAYER_SELECT)
     .single();
   if (error) throw error;
-  return data;
+  return data as unknown as Player;
 }
 
 export async function updatePlayer(
@@ -58,10 +105,10 @@ export async function updatePlayer(
     .from('players')
     .update(patch)
     .eq('id', id)
-    .select('*')
+    .select(PLAYER_SELECT)
     .single();
   if (error) throw error;
-  return data;
+  return data as unknown as Player;
 }
 
 export async function deletePlayer(id: string): Promise<void> {

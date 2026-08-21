@@ -2,12 +2,12 @@ import { useLocalSearchParams } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Button, EmptyState } from '@/components/ui';
 import { LoadingState } from '@/components/ui/Skeleton';
-import { ChampionshipHeader, ChampionshipTabBar, StandingTable } from '@/components/golazo';
+import { ChampionshipHeader, ChampionshipTabBar, ClubStandingTable, StandingTable } from '@/components/golazo';
 import { useChampionship } from '@/hooks/useChampionships';
-import { useStandings, useGroupStandingsList } from '@/hooks/useStats';
+import { useStandings, useGroupStandingsList, useClubStandings } from '@/hooks/useStats';
 import { useGroups } from '@/hooks/useGroups';
 import { shareText } from '@/lib/share';
-import type { StandingRow } from '@/types/domain';
+import type { ClubStandingRow, StandingRow } from '@/types/domain';
 import { colors, spacing, typography } from '@/theme';
 
 export default function StandingsScreen() {
@@ -15,12 +15,21 @@ export default function StandingsScreen() {
   const championship = useChampionship(id);
   const groups = useGroups(id);
   const hasGroups = (groups.data?.length ?? 0) > 0;
+  const isLeagueSeries = championship.data?.competition_system === 'league_series';
 
   const overallStandings = useStandings(hasGroups ? undefined : id);
   const groupStandingsResults = useGroupStandingsList(id, groups.data ?? []);
   const groupStandingsLoading = groupStandingsResults.some((r) => r.isLoading);
+  const clubStandings = useClubStandings(isLeagueSeries ? id : undefined);
 
   if (!championship.data) return <LoadingState rows={4} />;
+
+  const handleShareClubs = (title: string, rows: ClubStandingRow[]) => {
+    const lines = rows
+      .slice(0, 10)
+      .map((r, i) => `${i + 1}. ${r.club_short_name || r.club_name} — ${r.points} pts (PJ ${r.played}, DG ${r.goal_difference >= 0 ? '+' : ''}${r.goal_difference})`);
+    void shareText(`🏆 ${title}\n\n${lines.join('\n')}`, title);
+  };
 
   const handleShare = (title: string, rows: StandingRow[]) => {
     const lines = rows
@@ -36,10 +45,38 @@ export default function StandingsScreen() {
 
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={typography.h2}>Tabla de posiciones</Text>
-        {hasGroups ? (
+        {hasGroups && !isLeagueSeries ? (
           <Text style={[typography.caption, styles.muted]}>
             Los 2 primeros de cada grupo (destacados) clasifican a la fase eliminatoria
           </Text>
+        ) : null}
+
+        {isLeagueSeries ? (
+          <View style={styles.groupSection}>
+            <View style={styles.headerRow}>
+              <Text style={typography.h3}>Tabla general</Text>
+              {clubStandings.data && clubStandings.data.length > 0 ? (
+                <Button
+                  label="Compartir"
+                  variant="outline"
+                  size="sm"
+                  onPress={() =>
+                    handleShareClubs(`Tabla general — ${championship.data!.name}`, clubStandings.data!)
+                  }
+                />
+              ) : null}
+            </View>
+            <Text style={[typography.caption, styles.muted]}>
+              Suma los puntos de las 4 series (Tercera, Segunda, Senior, Primera) de cada club
+            </Text>
+            {clubStandings.isLoading ? (
+              <LoadingState rows={3} />
+            ) : clubStandings.data && clubStandings.data.length > 0 ? (
+              <ClubStandingTable rows={clubStandings.data} />
+            ) : (
+              <Text style={[typography.caption, styles.muted]}>Sin partidos jugados todavía</Text>
+            )}
+          </View>
         ) : null}
 
         {hasGroups ? (
@@ -63,7 +100,7 @@ export default function StandingsScreen() {
                       ) : null}
                     </View>
                     {rows.length > 0 ? (
-                      <StandingTable rows={rows} qualifyCount={2} />
+                      <StandingTable rows={rows} qualifyCount={isLeagueSeries ? 0 : 2} />
                     ) : (
                       <Text style={[typography.caption, styles.muted]}>Sin partidos jugados todavía</Text>
                     )}

@@ -40,7 +40,9 @@ export default function FixtureScreen() {
   const hasFixture = (matches.data?.length ?? 0) > 0;
   const canGenerate = (teams.data?.length ?? 0) >= 2;
   const teamsMissingGroup = (teams.data ?? []).filter((t) => !t.group_id).length;
-  const usesGroups = championship.data?.competition_system === 'groups_playoffs';
+  const usesGroups =
+    championship.data?.competition_system === 'groups_playoffs' ||
+    championship.data?.competition_system === 'league_series';
   const blockedByMissingGroup = usesGroups && teamsMissingGroup > 0 && (teams.data?.length ?? 0) > 0;
 
   const fixtureTeams = () => (teams.data ?? []).map((t) => ({ id: t.id, group_id: t.group_id }));

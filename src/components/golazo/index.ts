@@ -1,6 +1,7 @@
 export * from './TeamLogo';
 export * from './MatchCard';
 export * from './StandingTable';
+export * from './ClubStandingTable';
 export * from './TopScorersList';
 export * from './EventItem';
 export * from './TournamentCard';

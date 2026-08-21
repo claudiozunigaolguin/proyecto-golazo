@@ -9,6 +9,7 @@ import { usePlayersByTeam } from '@/hooks/usePlayers';
 import { useMatches } from '@/hooks/useMatches';
 import { useStandings } from '@/hooks/useStats';
 import { useGroups } from '@/hooks/useGroups';
+import { useClub } from '@/hooks/useClubs';
 import { useChampionshipRole } from '@/hooks/useChampionshipRole';
 import { pickAndUploadImage, teamLogoPath } from '@/lib/storage';
 import { PLAYER_POSITION_SHORT } from '@/types/domain';
@@ -27,6 +28,7 @@ export default function TeamDetailScreen() {
   const groups = useGroups(championshipId);
   const { isManager } = useChampionshipRole(championshipId);
   const updateTeam = useUpdateTeam(championshipId ?? '', teamId);
+  const club = useClub(team.data?.club_id ?? undefined);
 
   const teamsById = useMemo(() => new Map((teams.data ?? []).map((t) => [t.id, t])), [teams.data]);
 
@@ -66,7 +68,15 @@ export default function TeamDetailScreen() {
           ) : null}
         </View>
 
-        {groups.data && groups.data.length > 0 ? (
+        {t.club_id ? (
+          <View style={styles.section}>
+            <Text style={typography.h3}>Club</Text>
+            <Text style={typography.body}>{club.data?.name ?? '—'}</Text>
+            <Text style={[typography.caption, styles.muted]}>
+              Serie: {groups.data?.find((g) => g.id === t.group_id)?.name ?? '—'}
+            </Text>
+          </View>
+        ) : groups.data && groups.data.length > 0 ? (
           <View style={styles.section}>
             <Text style={typography.h3}>Grupo</Text>
             {isManager ? (
@@ -118,10 +128,10 @@ export default function TeamDetailScreen() {
                   onPress={() => router.push(`/player/${p.id}`)}
                   style={styles.playerRow}
                 >
-                  <Avatar uri={p.photo_url} name={`${p.first_name} ${p.last_name}`} size={36} />
+                  <Avatar uri={p.athlete.photo_url} name={`${p.athlete.first_name} ${p.athlete.last_name}`} size={36} />
                   <View style={styles.playerInfo}>
                     <Text style={typography.bodyBold}>
-                      {p.first_name} {p.last_name}
+                      {p.athlete.first_name} {p.athlete.last_name}
                     </Text>
                     <Text style={[typography.caption, styles.muted]}>
                       {PLAYER_POSITION_SHORT[p.position]}

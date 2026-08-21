@@ -23,7 +23,7 @@ function AuthGate({ children }: { children: React.ReactNode }) {
 
   const firstSegment = segments[0];
   const inAuthGroup = firstSegment === '(auth)';
-  const isPublicRoute = firstSegment === 'public';
+  const isPublicRoute = firstSegment === 'public' || firstSegment === 'ficha';
 
   if (!session && !inAuthGroup && !isPublicRoute) {
     return <Redirect href="/(auth)/login" />;
@@ -53,6 +53,7 @@ export default function RootLayout() {
             <Stack.Screen name="(auth)" />
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="public/[slug]/index" />
+            <Stack.Screen name="ficha/[code]/index" />
           </Stack>
         </AuthGate>
       </SafeAreaProvider>

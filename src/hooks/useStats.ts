@@ -5,6 +5,7 @@ import type { Group } from '@/api/groups';
 export const statsKeys = {
   standings: (championshipId: string, groupId?: string | null) =>
     ['stats', 'standings', championshipId, groupId ?? 'all'] as const,
+  clubStandings: (championshipId: string) => ['stats', 'clubStandings', championshipId] as const,
   topScorers: (championshipId: string) => ['stats', 'topScorers', championshipId] as const,
   topAssists: (championshipId: string) => ['stats', 'topAssists', championshipId] as const,
   topCards: (championshipId: string) => ['stats', 'topCards', championshipId] as const,
@@ -27,6 +28,14 @@ export function useGroupStandingsList(championshipId: string | undefined, groups
       queryFn: () => api.getStandings(championshipId as string, group.id),
       enabled: !!championshipId,
     })),
+  });
+}
+
+export function useClubStandings(championshipId: string | undefined) {
+  return useQuery({
+    queryKey: statsKeys.clubStandings(championshipId ?? ''),
+    queryFn: () => api.getClubStandings(championshipId as string),
+    enabled: !!championshipId,
   });
 }
 
@@ -67,6 +76,7 @@ export function useInvalidateDerivedStats() {
   const queryClient = useQueryClient();
   return (championshipId: string) => {
     void queryClient.invalidateQueries({ queryKey: ['stats', 'standings', championshipId] });
+    void queryClient.invalidateQueries({ queryKey: statsKeys.clubStandings(championshipId) });
     void queryClient.invalidateQueries({ queryKey: statsKeys.topScorers(championshipId) });
     void queryClient.invalidateQueries({ queryKey: statsKeys.topAssists(championshipId) });
     void queryClient.invalidateQueries({ queryKey: statsKeys.topCards(championshipId) });

@@ -26,3 +26,15 @@ export async function createGroups(championshipId: string, count: number): Promi
   if (error) throw error;
   return data ?? [];
 }
+
+/** Crea grupos con nombres explícitos, ej. las 4 series fijas de "Liga con series". */
+export async function createNamedGroups(championshipId: string, names: string[]): Promise<Group[]> {
+  const rows = names.map((name, i) => ({
+    championship_id: championshipId,
+    name,
+    order_number: i + 1,
+  }));
+  const { data, error } = await supabase.from('groups').insert(rows).select('*');
+  if (error) throw error;
+  return data ?? [];
+}

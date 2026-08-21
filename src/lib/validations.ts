@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { isValidRut } from '@/lib/rut';
 
 export const registerSchema = z
   .object({
@@ -35,7 +36,13 @@ export const championshipSchema = z.object({
   endDate: z.string().optional(),
   teamSize: z.number().int().min(5).max(11).default(6),
   maxTeams: z.number().int().min(2).max(64).optional(),
-  competitionSystem: z.enum(['round_robin', 'groups_playoffs', 'knockout', 'league_playoffs']),
+  competitionSystem: z.enum([
+    'round_robin',
+    'groups_playoffs',
+    'knockout',
+    'league_playoffs',
+    'league_series',
+  ]),
   groupCount: z.number().int().min(2).max(12).optional(),
   pointsWin: z.number().int().min(0).default(3),
   pointsDraw: z.number().int().min(0).default(1),
@@ -55,11 +62,26 @@ export const teamSchema = z.object({
 
 export type TeamInput = z.infer<typeof teamSchema>;
 
+export const clubSchema = z.object({
+  name: z.string().trim().min(2, 'Mínimo 2 caracteres'),
+  shortName: z.string().trim().max(6).optional(),
+  primaryColor: z.string().optional(),
+  secondaryColor: z.string().optional(),
+});
+
+export type ClubInput = z.infer<typeof clubSchema>;
+
 export const playerSchema = z.object({
   firstName: z.string().trim().min(1, 'Ingresa el nombre'),
   lastName: z.string().trim().min(1, 'Ingresa el apellido'),
   jerseyNumber: z.number().int().min(0).max(99).optional(),
   position: z.enum(['gk', 'def', 'mid', 'fwd']),
+  rut: z
+    .string()
+    .trim()
+    .optional()
+    .refine((v) => !v || isValidRut(v), 'RUT inválido'),
+  birthDate: z.string().optional(),
 });
 
 export type PlayerInput = z.infer<typeof playerSchema>;
