@@ -7,6 +7,7 @@ import type {
   MemberRole,
   PlayerPosition,
   UserPlan,
+  WildcardRequestStatus,
 } from './domain';
 
 export interface Database {
@@ -77,6 +78,7 @@ export interface Database {
           group_count: number | null;
           name_locked: boolean;
           delete_locked: boolean;
+          max_players_per_team: number | null;
           created_at: string;
           updated_at: string;
         };
@@ -106,6 +108,7 @@ export interface Database {
           is_public: boolean;
           slug: string;
           group_count: number | null;
+          max_players_per_team: number | null;
         }> & { name: string; owner_id: string };
         Update: Partial<{
           name: string;
@@ -129,6 +132,7 @@ export interface Database {
           status: ChampionshipStatus;
           is_public: boolean;
           group_count: number | null;
+          max_players_per_team: number | null;
         }>;
         Relationships: [];
       };
@@ -244,6 +248,7 @@ export interface Database {
           coach_name: string | null;
           group_id: string | null;
           club_id: string | null;
+          wildcard_gk_slots: number;
           created_at: string;
           updated_at: string;
         };
@@ -319,6 +324,37 @@ export interface Database {
           jersey_number: number | null;
           position: PlayerPosition;
           team_id: string;
+        }>;
+        Relationships: [];
+      };
+      wildcard_requests: {
+        Row: {
+          id: string;
+          championship_id: string;
+          team_id: string;
+          requested_by: string;
+          reason: string;
+          replaced_player_id: string | null;
+          status: WildcardRequestStatus;
+          review_notes: string | null;
+          reviewed_by: string | null;
+          reviewed_at: string | null;
+          created_at: string;
+        };
+        Insert: Partial<{
+          id: string;
+          replaced_player_id: string | null;
+        }> & {
+          championship_id: string;
+          team_id: string;
+          requested_by: string;
+          reason: string;
+        };
+        Update: Partial<{
+          status: WildcardRequestStatus;
+          review_notes: string | null;
+          reviewed_by: string | null;
+          reviewed_at: string | null;
         }>;
         Relationships: [];
       };
@@ -448,6 +484,14 @@ export interface Database {
       cards: { Row: Database['public']['Tables']['match_events']['Row']; Relationships: [] };
     };
     Functions: {
+      approve_wildcard_request: {
+        Args: { p_request_id: string };
+        Returns: void;
+      };
+      reject_wildcard_request: {
+        Args: { p_request_id: string; p_reason?: string | null };
+        Returns: void;
+      };
       find_or_create_athlete: {
         Args: {
           p_rut: string | null;

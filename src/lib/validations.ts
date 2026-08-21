@@ -36,6 +36,7 @@ export const championshipSchema = z.object({
   endDate: z.string().optional(),
   teamSize: z.number().int().min(5).max(11).default(6),
   maxTeams: z.number().int().min(2).max(64).optional(),
+  maxPlayersPerTeam: z.number().int().min(1).max(60).optional(),
   competitionSystem: z.enum([
     'round_robin',
     'groups_playoffs',
@@ -99,3 +100,11 @@ export const inviteMemberSchema = z.object({
 });
 
 export type InviteMemberInput = z.infer<typeof inviteMemberSchema>;
+
+export const wildcardRequestSchema = z.object({
+  teamId: z.string().uuid('Selecciona un equipo'),
+  reason: z.string().trim().min(10, 'Explica brevemente el motivo (mínimo 10 caracteres)'),
+  replacedPlayerId: z.string().uuid().optional(),
+});
+
+export type WildcardRequestInput = z.infer<typeof wildcardRequestSchema>;

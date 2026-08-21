@@ -76,6 +76,7 @@ export async function createChampionship(
       end_date: input.endDate || null,
       team_size: input.teamSize,
       max_teams: input.maxTeams ?? null,
+      max_players_per_team: input.maxPlayersPerTeam ?? null,
       competition_system: input.competitionSystem,
       points_win: input.pointsWin,
       points_draw: input.pointsDraw,

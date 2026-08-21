@@ -139,6 +139,12 @@ export default function ChampionshipAdminScreen() {
             description="Da acceso a otros usuarios para administrar este campeonato"
             onPress={() => router.push(`/championship/${championship.data!.id}/members`)}
           />
+          <AdminAction
+            icon="mail-open-outline"
+            label="Solicitudes"
+            description="Revisa y aprueba pedidos de arquero comodín"
+            onPress={() => router.push(`/championship/${championship.data!.id}/requests`)}
+          />
         </View>
 
         <View style={styles.section}>
