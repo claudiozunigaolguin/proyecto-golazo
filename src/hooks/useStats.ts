@@ -6,6 +6,7 @@ export const statsKeys = {
   standings: (championshipId: string, groupId?: string | null) =>
     ['stats', 'standings', championshipId, groupId ?? 'all'] as const,
   clubStandings: (championshipId: string) => ['stats', 'clubStandings', championshipId] as const,
+  teamCards: (championshipId: string) => ['stats', 'teamCards', championshipId] as const,
   topScorers: (championshipId: string) => ['stats', 'topScorers', championshipId] as const,
   topAssists: (championshipId: string) => ['stats', 'topAssists', championshipId] as const,
   topCards: (championshipId: string) => ['stats', 'topCards', championshipId] as const,
@@ -35,6 +36,14 @@ export function useClubStandings(championshipId: string | undefined) {
   return useQuery({
     queryKey: statsKeys.clubStandings(championshipId ?? ''),
     queryFn: () => api.getClubStandings(championshipId as string),
+    enabled: !!championshipId,
+  });
+}
+
+export function useTeamCards(championshipId: string | undefined) {
+  return useQuery({
+    queryKey: statsKeys.teamCards(championshipId ?? ''),
+    queryFn: () => api.getTeamCards(championshipId as string),
     enabled: !!championshipId,
   });
 }

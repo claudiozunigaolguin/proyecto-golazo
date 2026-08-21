@@ -1,4 +1,4 @@
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Button, EmptyState } from '@/components/ui';
 import { LoadingState } from '@/components/ui/Skeleton';
@@ -56,14 +56,22 @@ export default function StandingsScreen() {
             <View style={styles.headerRow}>
               <Text style={typography.h3}>Tabla general</Text>
               {clubStandings.data && clubStandings.data.length > 0 ? (
-                <Button
-                  label="Compartir"
-                  variant="outline"
-                  size="sm"
-                  onPress={() =>
-                    handleShareClubs(`Tabla general — ${championship.data!.name}`, clubStandings.data!)
-                  }
-                />
+                <View style={styles.actionRow}>
+                  <Button
+                    label="Compartir"
+                    variant="outline"
+                    size="sm"
+                    onPress={() =>
+                      handleShareClubs(`Tabla general — ${championship.data!.name}`, clubStandings.data!)
+                    }
+                  />
+                  <Button
+                    label="Generar imagen"
+                    variant="outline"
+                    size="sm"
+                    onPress={() => router.push(`/championship/${championship.data!.id}/share-card?groupId=club`)}
+                  />
+                </View>
               ) : null}
             </View>
             <Text style={[typography.caption, styles.muted]}>
@@ -91,12 +99,22 @@ export default function StandingsScreen() {
                     <View style={styles.headerRow}>
                       <Text style={typography.h3}>{group.name}</Text>
                       {rows.length > 0 ? (
-                        <Button
-                          label="Compartir"
-                          variant="outline"
-                          size="sm"
-                          onPress={() => handleShare(`${group.name} — ${championship.data!.name}`, rows)}
-                        />
+                        <View style={styles.actionRow}>
+                          <Button
+                            label="Compartir"
+                            variant="outline"
+                            size="sm"
+                            onPress={() => handleShare(`${group.name} — ${championship.data!.name}`, rows)}
+                          />
+                          <Button
+                            label="Generar imagen"
+                            variant="outline"
+                            size="sm"
+                            onPress={() =>
+                              router.push(`/championship/${championship.data!.id}/share-card?groupId=${group.id}`)
+                            }
+                          />
+                        </View>
                       ) : null}
                     </View>
                     {rows.length > 0 ? (
@@ -114,12 +132,20 @@ export default function StandingsScreen() {
             <View style={styles.headerRow}>
               <View />
               {overallStandings.data && overallStandings.data.length > 0 ? (
-                <Button
-                  label="Compartir tabla"
-                  variant="outline"
-                  size="sm"
-                  onPress={() => handleShare(`Así va la tabla de ${championship.data!.name}`, overallStandings.data!)}
-                />
+                <View style={styles.actionRow}>
+                  <Button
+                    label="Compartir tabla"
+                    variant="outline"
+                    size="sm"
+                    onPress={() => handleShare(`Así va la tabla de ${championship.data!.name}`, overallStandings.data!)}
+                  />
+                  <Button
+                    label="Generar imagen"
+                    variant="outline"
+                    size="sm"
+                    onPress={() => router.push(`/championship/${championship.data!.id}/share-card`)}
+                  />
+                </View>
               ) : null}
             </View>
             {overallStandings.isLoading ? (
@@ -150,6 +176,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  actionRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
   },
   list: {
     gap: spacing.xl,

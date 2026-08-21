@@ -28,6 +28,20 @@ export async function getClubStandings(championshipId: string): Promise<ClubStan
   return data ?? [];
 }
 
+export interface TeamCardCount {
+  team_id: string;
+  yellow_cards: number;
+  red_cards: number;
+}
+
+export async function getTeamCards(championshipId: string): Promise<TeamCardCount[]> {
+  const { data, error } = await supabase.rpc('get_team_cards', {
+    p_championship_id: championshipId,
+  });
+  if (error) throw error;
+  return data ?? [];
+}
+
 export async function getTopScorers(championshipId: string, limit = 50): Promise<TopScorerRow[]> {
   const { data, error } = await supabase.rpc('get_top_scorers', {
     p_championship_id: championshipId,
