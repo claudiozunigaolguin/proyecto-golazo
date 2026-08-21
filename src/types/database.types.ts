@@ -484,6 +484,10 @@ export interface Database {
       cards: { Row: Database['public']['Tables']['match_events']['Row']; Relationships: [] };
     };
     Functions: {
+      get_team_cards: {
+        Args: { p_championship_id: string };
+        Returns: { team_id: string; yellow_cards: number; red_cards: number }[];
+      };
       approve_wildcard_request: {
         Args: { p_request_id: string };
         Returns: void;

@@ -124,6 +124,42 @@ export interface ClubStandingRow {
   points: number;
 }
 
+export type ShareCardFormat = 'story' | 'post' | 'landscape';
+
+export const SHARE_CARD_FORMAT_LABEL: Record<ShareCardFormat, string> = {
+  story: 'Historia',
+  post: 'Post',
+  landscape: 'Horizontal',
+};
+
+export const SHARE_CARD_DIMENSIONS: Record<ShareCardFormat, { width: number; height: number }> = {
+  story: { width: 1080, height: 1920 },
+  post: { width: 1080, height: 1080 },
+  landscape: { width: 1920, height: 1080 },
+};
+
+export interface ShareCardRow {
+  id: string;
+  name: string;
+  shortName: string | null;
+  logoUrl: string | null;
+  played: number;
+  points: number;
+  goalsFor: number;
+  goalsAgainst: number;
+  goalDifference: number;
+  yellowCards: number;
+  redCards: number;
+}
+
+export interface ShareCardData {
+  championshipName: string;
+  championshipLogoUrl: string | null;
+  title: string;
+  rows: ShareCardRow[];
+  generatedAt: string;
+}
+
 export interface TopScorerRow {
   player_id: string;
   first_name: string;
