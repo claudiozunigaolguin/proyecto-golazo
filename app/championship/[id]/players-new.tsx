@@ -30,6 +30,7 @@ export default function CreatePlayerScreen() {
   const [birthDate, setBirthDate] = useState('');
   const [photoAsset, setPhotoAsset] = useState<ImagePickerAsset | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [rosterFull, setRosterFull] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const selectedTeamId = teamId || teams.data?.[0]?.id || '';
@@ -62,12 +63,15 @@ export default function CreatePlayerScreen() {
       return;
     }
     setError(null);
+    setRosterFull(false);
     setSubmitting(true);
     try {
       await createPlayer.mutateAsync({ input: parsed.data, photoAsset });
       router.back();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'No pudimos agregar al jugador');
+      const message = e instanceof Error ? e.message : 'No pudimos agregar al jugador';
+      setError(message);
+      setRosterFull(message.includes('alcanzó el máximo'));
     } finally {
       setSubmitting(false);
     }
@@ -126,6 +130,17 @@ export default function CreatePlayerScreen() {
         <SegmentedOptions options={POSITION_OPTIONS} value={position} onChange={setPosition} />
 
         {error ? <Text style={[typography.caption, styles.error]}>{error}</Text> : null}
+
+        {rosterFull && position === 'gk' ? (
+          <Button
+            label="Solicitar arquero comodín"
+            variant="outline"
+            onPress={() =>
+              router.push(`/championship/${championshipId}/wildcard-request?teamId=${selectedTeamId}`)
+            }
+            fullWidth
+          />
+        ) : null}
 
         <Button label="Agregar jugador" onPress={handleSubmit} loading={submitting} fullWidth />
       </ScrollView>

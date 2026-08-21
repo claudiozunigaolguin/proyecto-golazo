@@ -31,6 +31,7 @@ export default function CreateChampionshipScreen() {
   const [country, setCountry] = useState('');
   const [teamSize, setTeamSize] = useState('6');
   const [maxTeams, setMaxTeams] = useState('');
+  const [maxPlayersPerTeam, setMaxPlayersPerTeam] = useState('');
   const [competitionSystem, setCompetitionSystem] = useState<CompetitionSystem>('round_robin');
   const [groupCount, setGroupCount] = useState('4');
   const [pointsWin, setPointsWin] = useState('3');
@@ -52,6 +53,7 @@ export default function CreateChampionshipScreen() {
       country: country || undefined,
       teamSize: Number(teamSize) || 6,
       maxTeams: maxTeams ? Number(maxTeams) : undefined,
+      maxPlayersPerTeam: maxPlayersPerTeam ? Number(maxPlayersPerTeam) : undefined,
       competitionSystem,
       groupCount: competitionSystem === 'groups_playoffs' ? Number(groupCount) || undefined : undefined,
       pointsWin: Number(pointsWin) || 0,
@@ -149,6 +151,17 @@ export default function CreateChampionshipScreen() {
             keyboardType="number-pad"
             placeholder="8"
           />
+          <TextField
+            label="Máximo de jugadores por equipo (opcional)"
+            value={maxPlayersPerTeam}
+            onChangeText={setMaxPlayersPerTeam}
+            keyboardType="number-pad"
+            placeholder="10"
+          />
+          <Text style={[typography.caption, styles.notice]}>
+            Si lo defines, un equipo no podrá superar ese número de jugadores salvo que se
+            apruebe un arquero comodín excepcional.
+          </Text>
 
           <Text style={[typography.caption, styles.label]}>Sistema de competición</Text>
           <SegmentedOptions

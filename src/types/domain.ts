@@ -12,6 +12,14 @@ export type ChampionshipStatus = 'upcoming' | 'ongoing' | 'finished';
 
 export type MemberRole = 'admin' | 'organizer';
 
+export type WildcardRequestStatus = 'pending' | 'approved' | 'rejected';
+
+export const WILDCARD_REQUEST_STATUS_LABEL: Record<WildcardRequestStatus, string> = {
+  pending: 'Pendiente',
+  approved: 'Aprobada',
+  rejected: 'Rechazada',
+};
+
 export type UserPlan = 'free' | 'starter' | 'growth' | 'unlimited';
 
 export const PLAN_LABEL: Record<UserPlan, string> = {
