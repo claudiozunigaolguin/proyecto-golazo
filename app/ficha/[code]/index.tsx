@@ -56,7 +56,7 @@ export default function PublicPlayerScreen() {
 
       <Card style={styles.qrCard}>
         <View style={styles.qrWrap}>
-          <QRCode value={publicUrl} size={140} color={colors.textPrimary} backgroundColor={colors.background} />
+          <QRCode value={publicUrl} size={140} color={colors.textPrimary} backgroundColor={colors.card} />
         </View>
       </Card>
 
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   },
   qrWrap: {
     padding: spacing.md,
-    backgroundColor: colors.background,
+    backgroundColor: colors.card,
     borderRadius: radius.lg,
   },
   section: {

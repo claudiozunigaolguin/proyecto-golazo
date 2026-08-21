@@ -108,7 +108,7 @@ export async function generateShareCardImage(
   // Panel blanco con la tabla.
   const panelY = cursorY;
   const panelHeight = height - panelY - pad;
-  ctx.fillStyle = colors.background;
+  ctx.fillStyle = colors.card;
   drawRoundedRect(ctx, pad, panelY, width - pad * 2, panelHeight, 24 * scale);
   ctx.fill();
 

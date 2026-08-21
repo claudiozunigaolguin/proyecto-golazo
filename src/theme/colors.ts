@@ -4,7 +4,11 @@ export const colors = {
   primaryLight: '#E4F5EA',
   accent: '#FFB020',
 
-  background: '#FFFFFF',
+  // Fondo de pantalla con un leve tinte gris-verde: le da profundidad a la
+  // app y hace que las tarjetas (colors.card, blancas) se despeguen del
+  // fondo en vez de fundirse con él (antes ambos eran blanco puro).
+  background: '#F1F4F2',
+  card: '#FFFFFF',
   surface: '#F6F8F7',
   surfaceAlt: '#EFF3F1',
   border: '#E4E8E6',
