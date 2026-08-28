@@ -15,10 +15,12 @@ import { useTeams } from '@/hooks/useTeams';
 import { useMatches } from '@/hooks/useMatches';
 import { useStandings, useTopScorers, useChampionshipStats } from '@/hooks/useStats';
 import { getPublicChampionshipUrl, shareText } from '@/lib/share';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 export default function ChampionshipSummaryScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
 
   const championship = useChampionship(id);
   const teams = useTeams(id);
@@ -165,34 +167,35 @@ export default function ChampionshipSummaryScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  container: {
-    padding: spacing.xl,
-    gap: spacing.xxl,
-    paddingBottom: spacing.xxl * 2,
-  },
-  statsGrid: {
-    flexDirection: 'row',
-    gap: spacing.md,
-  },
-  section: {
-    gap: spacing.md,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  list: {
-    gap: spacing.md,
-  },
-  muted: {
-    color: colors.textSecondary,
-  },
-  link: {
-    color: colors.primary,
-    fontWeight: '700',
-    fontSize: 13,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    container: {
+      padding: spacing.xl,
+      gap: spacing.xxl,
+      paddingBottom: spacing.xxl * 2,
+    },
+    statsGrid: {
+      flexDirection: 'row',
+      gap: spacing.md,
+    },
+    section: {
+      gap: spacing.md,
+    },
+    sectionHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    list: {
+      gap: spacing.md,
+    },
+    muted: {
+      color: colors.textSecondary,
+    },
+    link: {
+      color: colors.primary,
+      fontWeight: '700',
+      fontSize: 13,
+    },
+  });

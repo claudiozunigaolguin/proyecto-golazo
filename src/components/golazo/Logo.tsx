@@ -1,6 +1,7 @@
+import { useMemo } from 'react';
 import { Image } from 'expo-image';
 import { StyleSheet, Text, View } from 'react-native';
-import { colors } from '@/theme';
+import { useColors, type ColorPalette } from '@/theme';
 
 interface LogoProps {
   size?: 'sm' | 'md' | 'lg';
@@ -13,6 +14,8 @@ const SIZES = {
 };
 
 export function Logo({ size = 'md' }: LogoProps) {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const s = SIZES[size];
   return (
     <View style={styles.row}>
@@ -28,18 +31,19 @@ export function Logo({ size = 'md' }: LogoProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  wordmark: {
-    fontWeight: '900',
-    color: colors.textPrimary,
-    letterSpacing: -0.5,
-  },
-  wordmarkAccent: {
-    color: colors.primary,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    wordmark: {
+      fontWeight: '900',
+      color: colors.textPrimary,
+      letterSpacing: -0.5,
+    },
+    wordmarkAccent: {
+      color: colors.primary,
+    },
+  });

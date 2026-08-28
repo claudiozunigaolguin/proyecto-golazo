@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { router, Stack } from 'expo-router';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,7 +13,7 @@ import { championshipSchema } from '@/lib/validations';
 import { pickImage, uploadImage, championshipLogoPath } from '@/lib/storage';
 import type { ImagePickerAsset } from 'expo-image-picker';
 import { COMPETITION_SYSTEM_LABEL, type CompetitionSystem } from '@/types/domain';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 const COMPETITION_OPTIONS: { value: CompetitionSystem; label: string }[] = (
   Object.keys(COMPETITION_SYSTEM_LABEL) as CompetitionSystem[]
@@ -23,6 +23,8 @@ const TEAM_SIZE_OPTIONS = ['5', '6', '7', '8', '11'].map((v) => ({ value: v, lab
 const GROUP_COUNT_OPTIONS = ['2', '3', '4', '6', '8'].map((v) => ({ value: v, label: `${v} grupos` }));
 
 export default function CreateChampionshipScreen() {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const userId = useAuthStore((s) => s.session?.user.id);
   const createChampionship = useCreateChampionship();
   const billing = useMyBillingStatus();
@@ -272,55 +274,56 @@ export default function CreateChampionshipScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  flex1: { flex: 1 },
-  container: {
-    padding: spacing.xl,
-    gap: spacing.xxl,
-    paddingBottom: spacing.xxl * 2,
-  },
-  section: {
-    gap: spacing.md,
-  },
-  row: {
-    flexDirection: 'row',
-    gap: spacing.md,
-  },
-  label: {
-    color: colors.textSecondary,
-    marginTop: spacing.xs,
-  },
-  notice: {
-    color: colors.warning,
-  },
-  switchRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  muted: {
-    color: colors.textSecondary,
-  },
-  error: {
-    color: colors.danger,
-  },
-  logoPicker: {
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  logoPreview: {
-    width: 72,
-    height: 72,
-    borderRadius: 16,
-  },
-  logoPlaceholder: {
-    backgroundColor: colors.primaryLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  logoLabel: {
-    color: colors.primary,
-    fontWeight: '700',
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    flex1: { flex: 1 },
+    container: {
+      padding: spacing.xl,
+      gap: spacing.xxl,
+      paddingBottom: spacing.xxl * 2,
+    },
+    section: {
+      gap: spacing.md,
+    },
+    row: {
+      flexDirection: 'row',
+      gap: spacing.md,
+    },
+    label: {
+      color: colors.textSecondary,
+      marginTop: spacing.xs,
+    },
+    notice: {
+      color: colors.warning,
+    },
+    switchRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.md,
+    },
+    muted: {
+      color: colors.textSecondary,
+    },
+    error: {
+      color: colors.danger,
+    },
+    logoPicker: {
+      alignItems: 'center',
+      gap: spacing.xs,
+    },
+    logoPreview: {
+      width: 72,
+      height: 72,
+      borderRadius: 16,
+    },
+    logoPlaceholder: {
+      backgroundColor: colors.primaryLight,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    logoLabel: {
+      color: colors.primary,
+      fontWeight: '700',
+    },
+  });

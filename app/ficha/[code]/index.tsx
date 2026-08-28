@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
@@ -8,10 +9,12 @@ import { useAthleteByCode } from '@/hooks/useAthletes';
 import { usePlayersByAthlete } from '@/hooks/usePlayers';
 import { getPublicPlayerUrl } from '@/lib/share';
 import { PLAYER_POSITION_LABEL } from '@/types/domain';
-import { colors, radius, spacing, typography } from '@/theme';
+import { useColors, radius, spacing, typography, type ColorPalette } from '@/theme';
 
 export default function PublicPlayerScreen() {
   const { code } = useLocalSearchParams<{ code: string }>();
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const athlete = useAthleteByCode(code);
   const enrollments = usePlayersByAthlete(athlete.data?.id);
 
@@ -84,38 +87,39 @@ export default function PublicPlayerScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  container: {
-    padding: spacing.xl,
-    gap: spacing.xxl,
-    paddingBottom: spacing.xxl * 2,
-  },
-  brandRow: {
-    alignItems: 'center',
-  },
-  header: {
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  muted: {
-    color: colors.textSecondary,
-  },
-  qrCard: {
-    alignItems: 'center',
-  },
-  qrWrap: {
-    padding: spacing.md,
-    backgroundColor: colors.card,
-    borderRadius: radius.lg,
-  },
-  section: {
-    gap: spacing.md,
-  },
-  list: {
-    gap: spacing.sm,
-  },
-  enrollmentRow: {
-    gap: 2,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    container: {
+      padding: spacing.xl,
+      gap: spacing.xxl,
+      paddingBottom: spacing.xxl * 2,
+    },
+    brandRow: {
+      alignItems: 'center',
+    },
+    header: {
+      alignItems: 'center',
+      gap: spacing.xs,
+    },
+    muted: {
+      color: colors.textSecondary,
+    },
+    qrCard: {
+      alignItems: 'center',
+    },
+    qrWrap: {
+      padding: spacing.md,
+      backgroundColor: colors.card,
+      borderRadius: radius.lg,
+    },
+    section: {
+      gap: spacing.md,
+    },
+    list: {
+      gap: spacing.sm,
+    },
+    enrollmentRow: {
+      gap: 2,
+    },
+  });

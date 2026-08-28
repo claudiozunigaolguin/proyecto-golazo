@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Image } from 'expo-image';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button, SegmentedOptions } from '@/components/ui';
@@ -11,13 +11,15 @@ import {
   type ShareCardData,
   type ShareCardFormat,
 } from '@/types/domain';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 const FORMAT_OPTIONS: { value: ShareCardFormat; label: string }[] = (
   Object.keys(SHARE_CARD_FORMAT_LABEL) as ShareCardFormat[]
 ).map((value) => ({ value, label: SHARE_CARD_FORMAT_LABEL[value] }));
 
 export function ShareCardGenerator({ data }: { data: ShareCardData }) {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const [format, setFormat] = useState<ShareCardFormat>('story');
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
@@ -82,19 +84,20 @@ export function ShareCardGenerator({ data }: { data: ShareCardData }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    gap: spacing.lg,
-  },
-  previewWrap: {
-    backgroundColor: colors.surface,
-    borderRadius: 16,
-    overflow: 'hidden',
-  },
-  actions: {
-    gap: spacing.sm,
-  },
-  error: {
-    color: colors.danger,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    container: {
+      gap: spacing.lg,
+    },
+    previewWrap: {
+      backgroundColor: colors.surface,
+      borderRadius: 16,
+      overflow: 'hidden',
+    },
+    actions: {
+      gap: spacing.sm,
+    },
+    error: {
+      color: colors.danger,
+    },
+  });

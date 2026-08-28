@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Button, Card, EmptyState } from '@/components/ui';
@@ -8,10 +9,12 @@ import { useTeams } from '@/hooks/useTeams';
 import { useClubs } from '@/hooks/useClubs';
 import { useGroups } from '@/hooks/useGroups';
 import { useChampionshipRole } from '@/hooks/useChampionshipRole';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 export default function TeamsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const championship = useChampionship(id);
   const teams = useTeams(id);
   const clubs = useClubs(id);
@@ -150,48 +153,49 @@ export default function TeamsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  container: {
-    padding: spacing.xl,
-    gap: spacing.lg,
-    paddingBottom: spacing.xxl * 2,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  list: {
-    gap: spacing.md,
-  },
-  teamRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  teamInfo: {
-    flex: 1,
-    gap: 2,
-  },
-  muted: {
-    color: colors.textSecondary,
-  },
-  clubCard: {
-    gap: spacing.sm,
-  },
-  seriesRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.xs,
-  },
-  seriesChip: {
-    paddingVertical: 4,
-    paddingHorizontal: spacing.sm,
-    borderRadius: 999,
-    backgroundColor: colors.surfaceAlt,
-  },
-  seriesChipText: {
-    color: colors.textSecondary,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    container: {
+      padding: spacing.xl,
+      gap: spacing.lg,
+      paddingBottom: spacing.xxl * 2,
+    },
+    headerRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    list: {
+      gap: spacing.md,
+    },
+    teamRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.md,
+    },
+    teamInfo: {
+      flex: 1,
+      gap: 2,
+    },
+    muted: {
+      color: colors.textSecondary,
+    },
+    clubCard: {
+      gap: spacing.sm,
+    },
+    seriesRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: spacing.xs,
+    },
+    seriesChip: {
+      paddingVertical: 4,
+      paddingHorizontal: spacing.sm,
+      borderRadius: 999,
+      backgroundColor: colors.surfaceAlt,
+    },
+    seriesChipText: {
+      color: colors.textSecondary,
+    },
+  });

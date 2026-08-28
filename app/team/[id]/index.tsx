@@ -13,10 +13,12 @@ import { useClub } from '@/hooks/useClubs';
 import { useChampionshipRole } from '@/hooks/useChampionshipRole';
 import { pickAndUploadImage, teamLogoPath } from '@/lib/storage';
 import { PLAYER_POSITION_SHORT } from '@/types/domain';
-import { colors, radius, spacing, typography } from '@/theme';
+import { useColors, radius, spacing, typography, type ColorPalette } from '@/theme';
 
 export default function TeamDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const teamId = id as string;
   const team = useTeam(id);
   const championshipId = team.data?.championship_id;
@@ -188,46 +190,47 @@ export default function TeamDetailScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  container: {
-    padding: spacing.xl,
-    gap: spacing.xxl,
-    paddingBottom: spacing.xxl * 2,
-  },
-  header: {
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  muted: {
-    color: colors.textSecondary,
-  },
-  section: {
-    gap: spacing.md,
-  },
-  statsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.md,
-  },
-  statCell: {
-    width: 64,
-    alignItems: 'center',
-    gap: 2,
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
-    paddingVertical: spacing.sm,
-  },
-  list: {
-    gap: spacing.md,
-  },
-  playerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  playerInfo: {
-    flex: 1,
-    gap: 2,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    container: {
+      padding: spacing.xl,
+      gap: spacing.xxl,
+      paddingBottom: spacing.xxl * 2,
+    },
+    header: {
+      alignItems: 'center',
+      gap: spacing.sm,
+    },
+    muted: {
+      color: colors.textSecondary,
+    },
+    section: {
+      gap: spacing.md,
+    },
+    statsGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: spacing.md,
+    },
+    statCell: {
+      width: 64,
+      alignItems: 'center',
+      gap: 2,
+      backgroundColor: colors.surface,
+      borderRadius: radius.md,
+      paddingVertical: spacing.sm,
+    },
+    list: {
+      gap: spacing.md,
+    },
+    playerRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.md,
+    },
+    playerInfo: {
+      flex: 1,
+      gap: 2,
+    },
+  });

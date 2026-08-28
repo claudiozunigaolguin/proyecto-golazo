@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { Image } from 'expo-image';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -10,7 +10,7 @@ import { playerSchema } from '@/lib/validations';
 import { pickImage } from '@/lib/storage';
 import type { ImagePickerAsset } from 'expo-image-picker';
 import { PLAYER_POSITION_LABEL, type PlayerPosition } from '@/types/domain';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 const POSITION_OPTIONS: { value: PlayerPosition; label: string }[] = (
   Object.keys(PLAYER_POSITION_LABEL) as PlayerPosition[]
@@ -18,6 +18,8 @@ const POSITION_OPTIONS: { value: PlayerPosition; label: string }[] = (
 
 export default function CreatePlayerScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const championshipId = id as string;
   const teams = useTeams(id);
 
@@ -148,34 +150,35 @@ export default function CreatePlayerScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  container: {
-    padding: spacing.xl,
-    gap: spacing.lg,
-  },
-  photoPicker: {
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  photoPreview: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-  },
-  photoPlaceholder: {
-    backgroundColor: colors.primaryLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  photoLabel: {
-    color: colors.primary,
-    fontWeight: '700',
-  },
-  error: {
-    color: colors.danger,
-  },
-  notice: {
-    color: colors.textSecondary,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    container: {
+      padding: spacing.xl,
+      gap: spacing.lg,
+    },
+    photoPicker: {
+      alignItems: 'center',
+      gap: spacing.xs,
+    },
+    photoPreview: {
+      width: 72,
+      height: 72,
+      borderRadius: 36,
+    },
+    photoPlaceholder: {
+      backgroundColor: colors.primaryLight,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    photoLabel: {
+      color: colors.primary,
+      fontWeight: '700',
+    },
+    error: {
+      color: colors.danger,
+    },
+    notice: {
+      color: colors.textSecondary,
+    },
+  });

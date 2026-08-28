@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { router } from 'expo-router';
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
 import { Button, TextField } from '@/components/ui';
 import { useAuthStore } from '@/store/authStore';
 import { forgotPasswordSchema } from '@/lib/validations';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 export default function ForgotPasswordScreen() {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const resetPassword = useAuthStore((s) => s.resetPassword);
   const [email, setEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -65,21 +67,22 @@ export default function ForgotPasswordScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: spacing.xl,
-    gap: spacing.lg,
-  },
-  emoji: {
-    fontSize: 40,
-  },
-  description: {
-    color: colors.textSecondary,
-  },
-  error: {
-    color: colors.danger,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      padding: spacing.xl,
+      gap: spacing.lg,
+    },
+    emoji: {
+      fontSize: 40,
+    },
+    description: {
+      color: colors.textSecondary,
+    },
+    error: {
+      color: colors.danger,
+    },
+  });

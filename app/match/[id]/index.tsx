@@ -13,7 +13,7 @@ import { useChampionshipRole } from '@/hooks/useChampionshipRole';
 import { useAuthStore } from '@/store/authStore';
 import { shareText } from '@/lib/share';
 import { MATCH_STATUS_LABEL, type MatchEventType } from '@/types/domain';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 const EVENT_TYPE_OPTIONS: { value: MatchEventType; label: string }[] = [
   { value: 'goal', label: '⚽ Gol' },
@@ -24,6 +24,8 @@ const EVENT_TYPE_OPTIONS: { value: MatchEventType; label: string }[] = [
 
 export default function MatchDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const matchId = id as string;
   const match = useMatch(id);
   const homeTeam = useTeam(match.data?.home_team_id ?? undefined);
@@ -260,52 +262,53 @@ export default function MatchDetailScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  container: {
-    padding: spacing.xl,
-    gap: spacing.xl,
-    paddingBottom: spacing.xxl * 2,
-  },
-  statusRow: {
-    alignItems: 'center',
-  },
-  scoreboard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-  },
-  teamCol: {
-    alignItems: 'center',
-    gap: spacing.sm,
-    flex: 1,
-  },
-  score: {
-    fontSize: 36,
-    fontWeight: '800',
-    color: colors.textPrimary,
-  },
-  section: {
-    gap: spacing.md,
-  },
-  row: {
-    flexDirection: 'row',
-    gap: spacing.md,
-  },
-  flex1: {
-    flex: 1,
-  },
-  muted: {
-    color: colors.textSecondary,
-  },
-  errorText: {
-    color: colors.danger,
-  },
-  eventRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  eventItemFlex: {
-    flex: 1,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    container: {
+      padding: spacing.xl,
+      gap: spacing.xl,
+      paddingBottom: spacing.xxl * 2,
+    },
+    statusRow: {
+      alignItems: 'center',
+    },
+    scoreboard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-around',
+    },
+    teamCol: {
+      alignItems: 'center',
+      gap: spacing.sm,
+      flex: 1,
+    },
+    score: {
+      fontSize: 36,
+      fontWeight: '800',
+      color: colors.textPrimary,
+    },
+    section: {
+      gap: spacing.md,
+    },
+    row: {
+      flexDirection: 'row',
+      gap: spacing.md,
+    },
+    flex1: {
+      flex: 1,
+    },
+    muted: {
+      color: colors.textSecondary,
+    },
+    errorText: {
+      color: colors.danger,
+    },
+    eventRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    eventItemFlex: {
+      flex: 1,
+    },
+  });

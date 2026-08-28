@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Button, EmptyState } from '@/components/ui';
@@ -8,10 +9,12 @@ import { useStandings, useGroupStandingsList, useClubStandings } from '@/hooks/u
 import { useGroups } from '@/hooks/useGroups';
 import { shareText } from '@/lib/share';
 import type { ClubStandingRow, StandingRow } from '@/types/domain';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 export default function StandingsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const championship = useChampionship(id);
   const groups = useGroups(id);
   const hasGroups = (groups.data?.length ?? 0) > 0;
@@ -166,28 +169,29 @@ export default function StandingsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  container: {
-    padding: spacing.xl,
-    gap: spacing.lg,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  actionRow: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-  },
-  list: {
-    gap: spacing.xl,
-  },
-  muted: {
-    color: colors.textSecondary,
-  },
-  groupSection: {
-    gap: spacing.md,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    container: {
+      padding: spacing.xl,
+      gap: spacing.lg,
+    },
+    headerRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    actionRow: {
+      flexDirection: 'row',
+      gap: spacing.sm,
+    },
+    list: {
+      gap: spacing.xl,
+    },
+    muted: {
+      color: colors.textSecondary,
+    },
+    groupSection: {
+      gap: spacing.md,
+    },
+  });

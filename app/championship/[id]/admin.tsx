@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -8,7 +9,7 @@ import { useChampionship, useDeleteChampionship, useUpdateChampionship } from '@
 import { useChampionshipRole } from '@/hooks/useChampionshipRole';
 import { confirmAction } from '@/lib/confirm';
 import { CHAMPIONSHIP_STATUS_LABEL, type ChampionshipStatus } from '@/types/domain';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 const STATUS_OPTIONS: { value: ChampionshipStatus; label: string }[] = (
   Object.keys(CHAMPIONSHIP_STATUS_LABEL) as ChampionshipStatus[]
@@ -23,6 +24,8 @@ interface AdminActionProps {
 }
 
 function AdminAction({ icon, label, description, onPress, danger }: AdminActionProps) {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <Pressable onPress={onPress}>
       <Card style={styles.actionCard}>
@@ -43,6 +46,8 @@ function AdminAction({ icon, label, description, onPress, danger }: AdminActionP
 
 export default function ChampionshipAdminScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const championship = useChampionship(id);
   const { isManager, isLoading: roleLoading } = useChampionshipRole(id);
   const deleteChampionship = useDeleteChampionship();
@@ -169,44 +174,45 @@ export default function ChampionshipAdminScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  container: {
-    padding: spacing.xl,
-    gap: spacing.xl,
-    paddingBottom: spacing.xxl * 2,
-  },
-  section: {
-    gap: spacing.md,
-  },
-  actionCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  actionIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.primaryLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  actionIconDanger: {
-    backgroundColor: '#FCE8E8',
-  },
-  actionInfo: {
-    flex: 1,
-    gap: 2,
-  },
-  muted: {
-    color: colors.textSecondary,
-  },
-  deniedContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-    padding: spacing.xl,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    container: {
+      padding: spacing.xl,
+      gap: spacing.xl,
+      paddingBottom: spacing.xxl * 2,
+    },
+    section: {
+      gap: spacing.md,
+    },
+    actionCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.md,
+    },
+    actionIcon: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: colors.primaryLight,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    actionIconDanger: {
+      backgroundColor: '#FCE8E8',
+    },
+    actionInfo: {
+      flex: 1,
+      gap: 2,
+    },
+    muted: {
+      color: colors.textSecondary,
+    },
+    deniedContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: spacing.sm,
+      padding: spacing.xl,
+    },
+  });

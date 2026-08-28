@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { router } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { EmptyState } from '@/components/ui';
@@ -5,9 +6,11 @@ import { LoadingState } from '@/components/ui/Skeleton';
 import { TournamentCard } from '@/components/golazo';
 import { useAuthStore } from '@/store/authStore';
 import { useMyChampionships } from '@/hooks/useChampionships';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 export default function StatsScreen() {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const userId = useAuthStore((s) => s.session?.user.id);
   const myChampionships = useMyChampionships(userId);
 
@@ -43,17 +46,18 @@ export default function StatsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  container: {
-    padding: spacing.xl,
-    gap: spacing.lg,
-    paddingBottom: spacing.xxl * 2,
-  },
-  subtitle: {
-    color: colors.textSecondary,
-  },
-  list: {
-    gap: spacing.md,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    container: {
+      padding: spacing.xl,
+      gap: spacing.lg,
+      paddingBottom: spacing.xxl * 2,
+    },
+    subtitle: {
+      color: colors.textSecondary,
+    },
+    list: {
+      gap: spacing.md,
+    },
+  });

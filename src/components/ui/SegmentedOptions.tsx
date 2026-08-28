@@ -1,5 +1,6 @@
+import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors, radius, spacing, typography } from '@/theme';
+import { useColors, radius, spacing, typography, type ColorPalette } from '@/theme';
 
 interface Option<T extends string> {
   value: T;
@@ -17,6 +18,8 @@ export function SegmentedOptions<T extends string>({
   value,
   onChange,
 }: SegmentedOptionsProps<T>) {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <View style={styles.wrap}>
       {options.map((opt) => {
@@ -37,29 +40,30 @@ export function SegmentedOptions<T extends string>({
   );
 }
 
-const styles = StyleSheet.create({
-  wrap: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
-  },
-  chip: {
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    borderRadius: radius.pill,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.card,
-  },
-  chipActive: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-  },
-  text: {
-    color: colors.textSecondary,
-  },
-  textActive: {
-    color: colors.textInverse,
-    fontWeight: '700',
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    wrap: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: spacing.sm,
+    },
+    chip: {
+      paddingVertical: spacing.sm,
+      paddingHorizontal: spacing.md,
+      borderRadius: radius.pill,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.card,
+    },
+    chipActive: {
+      backgroundColor: colors.primary,
+      borderColor: colors.primary,
+    },
+    text: {
+      color: colors.textSecondary,
+    },
+    textActive: {
+      color: colors.textInverse,
+      fontWeight: '700',
+    },
+  });

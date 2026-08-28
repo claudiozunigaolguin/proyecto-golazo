@@ -1,7 +1,8 @@
+import { useMemo } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { TeamLogo } from './TeamLogo';
 import type { ClubStandingRow } from '@/types/domain';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 interface ClubStandingTableProps {
   rows: ClubStandingRow[];
@@ -12,6 +13,8 @@ const COL_WIDTH = 32;
 
 /** Tabla general de una "Liga con series": puntos combinados de las 4 series de cada club. */
 export function ClubStandingTable({ rows, onClubPress }: ClubStandingTableProps) {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
       <View>
@@ -59,36 +62,37 @@ export function ClubStandingTable({ rows, onClubPress }: ClubStandingTableProps)
   );
 }
 
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.xs,
-  },
-  headerRow: {
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  headerText: {
-    ...typography.small,
-    color: colors.textMuted,
-  },
-  pos: {
-    width: 24,
-    textAlign: 'center',
-  },
-  clubCol: {
-    width: 160,
-    paddingLeft: spacing.sm,
-  },
-  clubCell: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  col: {
-    width: COL_WIDTH,
-    textAlign: 'center',
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: spacing.sm,
+      paddingHorizontal: spacing.xs,
+    },
+    headerRow: {
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    headerText: {
+      ...typography.small,
+      color: colors.textMuted,
+    },
+    pos: {
+      width: 24,
+      textAlign: 'center',
+    },
+    clubCol: {
+      width: 160,
+      paddingLeft: spacing.sm,
+    },
+    clubCell: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.sm,
+    },
+    col: {
+      width: COL_WIDTH,
+      textAlign: 'center',
+    },
+  });

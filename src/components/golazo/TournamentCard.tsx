@@ -1,10 +1,11 @@
+import { useMemo } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, Text, View } from 'react-native';
 import { Badge, Card } from '@/components/ui';
 import { TeamLogo } from './TeamLogo';
 import type { Championship } from '@/api/championships';
 import { CHAMPIONSHIP_STATUS_LABEL } from '@/types/domain';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 interface TournamentCardProps {
   championship: Championship;
@@ -24,6 +25,8 @@ function statusTone(status: Championship['status']) {
 }
 
 export function TournamentCard({ championship, teamsCount, onPress }: TournamentCardProps) {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <Card onPress={onPress} style={styles.card}>
       <View style={styles.header}>
@@ -52,25 +55,26 @@ export function TournamentCard({ championship, teamsCount, onPress }: Tournament
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    gap: spacing.md,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  headerText: {
-    flex: 1,
-    gap: 2,
-  },
-  season: {
-    color: colors.textSecondary,
-  },
-  footer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    card: {
+      gap: spacing.md,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.md,
+    },
+    headerText: {
+      flex: 1,
+      gap: 2,
+    },
+    season: {
+      color: colors.textSecondary,
+    },
+    footer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.xs,
+    },
+  });

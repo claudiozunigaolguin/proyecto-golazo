@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button, EmptyState } from '@/components/ui';
@@ -9,10 +9,12 @@ import { useTeam } from '@/hooks/useTeams';
 import { useAddMatchEvent } from '@/hooks/useEvents';
 import { useAuthStore } from '@/store/authStore';
 import { confirmAction } from '@/lib/confirm';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 export default function LiveMatchScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const matchId = id as string;
   const match = useMatch(id);
   const championshipId = match.data?.championship_id ?? '';
@@ -182,61 +184,62 @@ export default function LiveMatchScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  flex1: { flex: 1 },
-  liveBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-    paddingTop: spacing.lg,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: colors.live,
-  },
-  liveText: {
-    color: colors.live,
-    fontWeight: '800',
-    letterSpacing: 1,
-  },
-  minute: {
-    color: colors.textSecondary,
-    fontWeight: '700',
-  },
-  scoreboard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    paddingVertical: spacing.xxl,
-  },
-  teamCol: {
-    alignItems: 'center',
-    gap: spacing.sm,
-    flex: 1,
-  },
-  score: {
-    fontSize: 48,
-    fontWeight: '800',
-    color: colors.textPrimary,
-  },
-  actions: {
-    padding: spacing.xl,
-    gap: spacing.md,
-  },
-  actionRow: {
-    flexDirection: 'row',
-    gap: spacing.md,
-  },
-  hint: {
-    color: colors.textMuted,
-    textAlign: 'center',
-  },
-  error: {
-    color: colors.danger,
-    textAlign: 'center',
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    flex1: { flex: 1 },
+    liveBadge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: spacing.sm,
+      paddingTop: spacing.lg,
+    },
+    dot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: colors.live,
+    },
+    liveText: {
+      color: colors.live,
+      fontWeight: '800',
+      letterSpacing: 1,
+    },
+    minute: {
+      color: colors.textSecondary,
+      fontWeight: '700',
+    },
+    scoreboard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-around',
+      paddingVertical: spacing.xxl,
+    },
+    teamCol: {
+      alignItems: 'center',
+      gap: spacing.sm,
+      flex: 1,
+    },
+    score: {
+      fontSize: 48,
+      fontWeight: '800',
+      color: colors.textPrimary,
+    },
+    actions: {
+      padding: spacing.xl,
+      gap: spacing.md,
+    },
+    actionRow: {
+      flexDirection: 'row',
+      gap: spacing.md,
+    },
+    hint: {
+      color: colors.textMuted,
+      textAlign: 'center',
+    },
+    error: {
+      color: colors.danger,
+      textAlign: 'center',
+    },
+  });

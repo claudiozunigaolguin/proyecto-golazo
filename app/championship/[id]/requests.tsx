@@ -15,7 +15,7 @@ import {
 import { useChampionshipRole } from '@/hooks/useChampionshipRole';
 import { confirmAction } from '@/lib/confirm';
 import { WILDCARD_REQUEST_STATUS_LABEL, type WildcardRequestStatus } from '@/types/domain';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 const STATUS_TONE: Record<WildcardRequestStatus, 'warning' | 'success' | 'danger'> = {
   pending: 'warning',
@@ -25,6 +25,8 @@ const STATUS_TONE: Record<WildcardRequestStatus, 'warning' | 'success' | 'danger
 
 export default function WildcardRequestsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const championshipId = id as string;
   const championship = useChampionship(id);
   const teams = useTeams(id);
@@ -158,32 +160,33 @@ export default function WildcardRequestsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  container: {
-    padding: spacing.xl,
-    gap: spacing.lg,
-    paddingBottom: spacing.xxl * 2,
-  },
-  list: {
-    gap: spacing.md,
-  },
-  card: {
-    gap: spacing.sm,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  muted: {
-    color: colors.textSecondary,
-  },
-  actionRow: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-  },
-  rejectForm: {
-    gap: spacing.sm,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    container: {
+      padding: spacing.xl,
+      gap: spacing.lg,
+      paddingBottom: spacing.xxl * 2,
+    },
+    list: {
+      gap: spacing.md,
+    },
+    card: {
+      gap: spacing.sm,
+    },
+    headerRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    muted: {
+      color: colors.textSecondary,
+    },
+    actionRow: {
+      flexDirection: 'row',
+      gap: spacing.sm,
+    },
+    rejectForm: {
+      gap: spacing.sm,
+    },
+  });

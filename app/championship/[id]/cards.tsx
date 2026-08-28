@@ -5,10 +5,12 @@ import { LoadingState } from '@/components/ui/Skeleton';
 import { ChampionshipHeader, ChampionshipTabBar, TopScorersList } from '@/components/golazo';
 import { useChampionship } from '@/hooks/useChampionships';
 import { useTopCards } from '@/hooks/useStats';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 export default function TopCardsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const championship = useChampionship(id);
   const topCards = useTopCards(id, 100);
 
@@ -67,13 +69,14 @@ export default function TopCardsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  container: {
-    padding: spacing.xl,
-    gap: spacing.xxl,
-  },
-  section: {
-    gap: spacing.md,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    container: {
+      padding: spacing.xl,
+      gap: spacing.xxl,
+    },
+    section: {
+      gap: spacing.md,
+    },
+  });

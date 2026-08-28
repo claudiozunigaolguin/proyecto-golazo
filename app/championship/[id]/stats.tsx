@@ -6,10 +6,12 @@ import { LoadingState } from '@/components/ui/Skeleton';
 import { ChampionshipHeader, ChampionshipTabBar } from '@/components/golazo';
 import { useChampionship } from '@/hooks/useChampionships';
 import { useChampionshipStats, useStandings, useTopAssists, useTopScorers } from '@/hooks/useStats';
-import { colors, radius, spacing, typography } from '@/theme';
+import { useColors, radius, spacing, typography, type ColorPalette } from '@/theme';
 
 export default function ChampionshipStatsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const championship = useChampionship(id);
   const stats = useChampionshipStats(id);
   const standings = useStandings(id);
@@ -106,47 +108,48 @@ export default function ChampionshipStatsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  container: {
-    padding: spacing.xl,
-    gap: spacing.lg,
-    paddingBottom: spacing.xxl * 2,
-  },
-  grid: {
-    flexDirection: 'row',
-    gap: spacing.md,
-  },
-  textCard: {
-    gap: 4,
-  },
-  section: {
-    gap: spacing.md,
-    marginTop: spacing.sm,
-  },
-  barRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    paddingVertical: spacing.xs,
-  },
-  barLabel: {
-    width: 80,
-  },
-  barTrack: {
-    flex: 1,
-    height: 10,
-    borderRadius: radius.pill,
-    backgroundColor: colors.surfaceAlt,
-    overflow: 'hidden',
-  },
-  barFill: {
-    height: '100%',
-    backgroundColor: colors.primary,
-    borderRadius: radius.pill,
-  },
-  barValue: {
-    width: 24,
-    textAlign: 'right',
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    container: {
+      padding: spacing.xl,
+      gap: spacing.lg,
+      paddingBottom: spacing.xxl * 2,
+    },
+    grid: {
+      flexDirection: 'row',
+      gap: spacing.md,
+    },
+    textCard: {
+      gap: 4,
+    },
+    section: {
+      gap: spacing.md,
+      marginTop: spacing.sm,
+    },
+    barRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.sm,
+      paddingVertical: spacing.xs,
+    },
+    barLabel: {
+      width: 80,
+    },
+    barTrack: {
+      flex: 1,
+      height: 10,
+      borderRadius: radius.pill,
+      backgroundColor: colors.surfaceAlt,
+      overflow: 'hidden',
+    },
+    barFill: {
+      height: '100%',
+      backgroundColor: colors.primary,
+      borderRadius: radius.pill,
+    },
+    barValue: {
+      width: 24,
+      textAlign: 'right',
+    },
+  });

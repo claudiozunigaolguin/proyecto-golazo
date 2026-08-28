@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useLocalSearchParams } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Avatar, Badge, Button, Card, SegmentedOptions, TextField } from '@/components/ui';
@@ -10,7 +10,7 @@ import { useAddMember, useChampionshipMembers, useRemoveMember } from '@/hooks/u
 import { inviteMemberSchema } from '@/lib/validations';
 import { confirmAction } from '@/lib/confirm';
 import type { MemberRole } from '@/types/domain';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 const ROLE_OPTIONS: { value: MemberRole; label: string }[] = [
   { value: 'admin', label: 'Administrador' },
@@ -19,6 +19,8 @@ const ROLE_OPTIONS: { value: MemberRole; label: string }[] = [
 
 export default function ChampionshipMembersScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const championshipId = id as string;
   const championship = useChampionship(id);
   const { isManager, isLoading: roleLoading } = useChampionshipRole(id);
@@ -130,39 +132,40 @@ export default function ChampionshipMembersScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  container: {
-    padding: spacing.xl,
-    gap: spacing.xl,
-    paddingBottom: spacing.xxl * 2,
-  },
-  muted: {
-    color: colors.textSecondary,
-  },
-  form: {
-    gap: spacing.md,
-  },
-  error: {
-    color: colors.danger,
-  },
-  list: {
-    gap: spacing.md,
-  },
-  memberRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  memberInfo: {
-    flex: 1,
-    gap: 2,
-  },
-  deniedContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-    padding: spacing.xl,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    container: {
+      padding: spacing.xl,
+      gap: spacing.xl,
+      paddingBottom: spacing.xxl * 2,
+    },
+    muted: {
+      color: colors.textSecondary,
+    },
+    form: {
+      gap: spacing.md,
+    },
+    error: {
+      color: colors.danger,
+    },
+    list: {
+      gap: spacing.md,
+    },
+    memberRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.md,
+    },
+    memberInfo: {
+      flex: 1,
+      gap: 2,
+    },
+    deniedContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: spacing.sm,
+      padding: spacing.xl,
+    },
+  });

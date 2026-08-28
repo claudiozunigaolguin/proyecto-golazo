@@ -12,10 +12,12 @@ import { useStandings, useGroupStandingsList, useTopScorers } from '@/hooks/useS
 import { useGroups } from '@/hooks/useGroups';
 import { copyToClipboard, getPublicChampionshipUrl, shareText } from '@/lib/share';
 import { CHAMPIONSHIP_STATUS_LABEL } from '@/types/domain';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 export default function PublicChampionshipScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const championship = useChampionshipBySlug(slug);
   const championshipId = championship.data?.id;
 
@@ -182,55 +184,56 @@ export default function PublicChampionshipScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  container: {
-    padding: spacing.xl,
-    gap: spacing.xxl,
-    paddingBottom: spacing.xxl * 2,
-  },
-  brandRow: {
-    alignItems: 'center',
-  },
-  header: {
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  muted: {
-    color: colors.textSecondary,
-  },
-  shareCard: {
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  shareButtons: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-  },
-  qrWrap: {
-    padding: spacing.md,
-  },
-  section: {
-    gap: spacing.md,
-  },
-  list: {
-    gap: spacing.xl,
-  },
-  groupSection: {
-    gap: spacing.md,
-  },
-  teamsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.md,
-  },
-  teamChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-    backgroundColor: colors.surface,
-    borderRadius: 999,
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    container: {
+      padding: spacing.xl,
+      gap: spacing.xxl,
+      paddingBottom: spacing.xxl * 2,
+    },
+    brandRow: {
+      alignItems: 'center',
+    },
+    header: {
+      alignItems: 'center',
+      gap: spacing.xs,
+    },
+    muted: {
+      color: colors.textSecondary,
+    },
+    shareCard: {
+      alignItems: 'center',
+      gap: spacing.md,
+    },
+    shareButtons: {
+      flexDirection: 'row',
+      gap: spacing.sm,
+    },
+    qrWrap: {
+      padding: spacing.md,
+    },
+    section: {
+      gap: spacing.md,
+    },
+    list: {
+      gap: spacing.xl,
+    },
+    groupSection: {
+      gap: spacing.md,
+    },
+    teamsGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: spacing.md,
+    },
+    teamChip: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.xs,
+      backgroundColor: colors.surface,
+      borderRadius: 999,
+      paddingVertical: spacing.xs,
+      paddingHorizontal: spacing.sm,
+    },
+  });

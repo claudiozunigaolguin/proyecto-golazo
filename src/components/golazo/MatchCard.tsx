@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { StyleSheet, Text, View } from 'react-native';
@@ -6,7 +7,7 @@ import { TeamLogo } from './TeamLogo';
 import type { Match } from '@/api/matches';
 import type { Team } from '@/api/teams';
 import { MATCH_STATUS_LABEL } from '@/types/domain';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 interface MatchCardProps {
   match: Match;
@@ -31,6 +32,8 @@ function statusTone(status: Match['status']) {
 }
 
 export function MatchCard({ match, homeTeam, awayTeam, roundName, onPress }: MatchCardProps) {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const hasScore = match.home_score !== null && match.away_score !== null;
   const scheduled = match.scheduled_at
     ? format(new Date(match.scheduled_at), "d MMM · HH:mm", { locale: es })
@@ -75,43 +78,44 @@ export function MatchCard({ match, homeTeam, awayTeam, roundName, onPress }: Mat
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    gap: spacing.md,
-  },
-  topRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  date: {
-    color: colors.textMuted,
-  },
-  teamsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  team: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  teamRight: {
-    justifyContent: 'flex-end',
-  },
-  scoreBox: {
-    paddingHorizontal: spacing.md,
-    minWidth: 64,
-    alignItems: 'center',
-  },
-  score: {
-    fontSize: 22,
-    fontWeight: '800',
-    color: colors.textPrimary,
-  },
-  vs: {
-    color: colors.textMuted,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    card: {
+      gap: spacing.md,
+    },
+    topRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    date: {
+      color: colors.textMuted,
+    },
+    teamsRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    team: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.sm,
+    },
+    teamRight: {
+      justifyContent: 'flex-end',
+    },
+    scoreBox: {
+      paddingHorizontal: spacing.md,
+      minWidth: 64,
+      alignItems: 'center',
+    },
+    score: {
+      fontSize: 22,
+      fontWeight: '800',
+      color: colors.textPrimary,
+    },
+    vs: {
+      color: colors.textMuted,
+    },
+  });

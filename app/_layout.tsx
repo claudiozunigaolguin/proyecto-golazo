@@ -6,12 +6,14 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { queryClient } from '@/lib/queryClient';
 import { useAuthStore } from '@/store/authStore';
-import { colors } from '@/theme';
+import { useThemeStore } from '@/store/themeStore';
+import { useColors } from '@/theme';
 
 function AuthGate({ children }: { children: React.ReactNode }) {
   const segments = useSegments();
   const session = useAuthStore((s) => s.session);
   const isInitialized = useAuthStore((s) => s.isInitialized);
+  const colors = useColors();
 
   if (!isInitialized) {
     return (
@@ -38,6 +40,7 @@ function AuthGate({ children }: { children: React.ReactNode }) {
 
 export default function RootLayout() {
   const init = useAuthStore((s) => s.init);
+  const scheme = useThemeStore((s) => s.scheme);
 
   useEffect(() => {
     const unsubscribe = init();
@@ -47,7 +50,7 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
-        <StatusBar style="dark" />
+        <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
         <AuthGate>
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="(auth)" />

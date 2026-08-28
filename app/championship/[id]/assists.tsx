@@ -1,13 +1,16 @@
+import { useMemo } from 'react';
 import { useLocalSearchParams } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LoadingState } from '@/components/ui/Skeleton';
 import { ChampionshipHeader, ChampionshipTabBar, TopScorersList } from '@/components/golazo';
 import { useChampionship } from '@/hooks/useChampionships';
 import { useTopAssists } from '@/hooks/useStats';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 export default function TopAssistsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const championship = useChampionship(id);
   const topAssists = useTopAssists(id, 100);
 
@@ -40,10 +43,11 @@ export default function TopAssistsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  container: {
-    padding: spacing.xl,
-    gap: spacing.lg,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    container: {
+      padding: spacing.xl,
+      gap: spacing.lg,
+    },
+  });
