@@ -7,3 +7,4 @@ export * from './Skeleton';
 export * from './StatCard';
 export * from './TextField';
 export * from './SegmentedOptions';
+export * from './ThemeToggle';

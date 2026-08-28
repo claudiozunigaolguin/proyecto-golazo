@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { router } from 'expo-router';
 import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Avatar, Button, EmptyState } from '@/components/ui';
@@ -5,9 +6,11 @@ import { Logo, TournamentCard } from '@/components/golazo';
 import { LoadingState } from '@/components/ui/Skeleton';
 import { useAuthStore } from '@/store/authStore';
 import { useMyChampionships, usePublicChampionships } from '@/hooks/useChampionships';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 export default function HomeScreen() {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const profile = useAuthStore((s) => s.profile);
   const userId = useAuthStore((s) => s.session?.user.id);
 
@@ -94,33 +97,34 @@ export default function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  container: {
-    padding: spacing.xl,
-    gap: spacing.xxl,
-    paddingBottom: spacing.xxl * 2,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  section: {
-    gap: spacing.md,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  sectionSubtitle: {
-    color: colors.textSecondary,
-  },
-  list: {
-    gap: spacing.md,
-  },
-  createButton: {
-    marginTop: spacing.xs,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    container: {
+      padding: spacing.xl,
+      gap: spacing.xxl,
+      paddingBottom: spacing.xxl * 2,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    section: {
+      gap: spacing.md,
+    },
+    sectionHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    sectionSubtitle: {
+      color: colors.textSecondary,
+    },
+    list: {
+      gap: spacing.md,
+    },
+    createButton: {
+      marginTop: spacing.xs,
+    },
+  });

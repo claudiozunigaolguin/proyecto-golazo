@@ -7,10 +7,12 @@ import { useChampionship } from '@/hooks/useChampionships';
 import { useGroups } from '@/hooks/useGroups';
 import { useStandings, useClubStandings, useTeamCards } from '@/hooks/useStats';
 import type { ShareCardData, ShareCardRow } from '@/types/domain';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 export default function ShareCardScreen() {
   const { id, groupId } = useLocalSearchParams<{ id: string; groupId?: string }>();
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const championshipId = id as string;
   const isClub = groupId === 'club';
 
@@ -97,11 +99,12 @@ export default function ShareCardScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  container: {
-    padding: spacing.xl,
-    gap: spacing.lg,
-    paddingBottom: spacing.xxl * 2,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    container: {
+      padding: spacing.xl,
+      gap: spacing.lg,
+      paddingBottom: spacing.xxl * 2,
+    },
+  });

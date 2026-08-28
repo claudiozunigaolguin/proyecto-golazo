@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -5,7 +6,7 @@ import { Badge } from '@/components/ui';
 import { TeamLogo } from './TeamLogo';
 import type { Championship } from '@/api/championships';
 import { CHAMPIONSHIP_STATUS_LABEL } from '@/types/domain';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 interface ChampionshipHeaderProps {
   championship: Championship;
@@ -13,6 +14,8 @@ interface ChampionshipHeaderProps {
 }
 
 export function ChampionshipHeader({ championship, onSharePress }: ChampionshipHeaderProps) {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <View style={styles.container}>
       <Pressable onPress={() => router.back()} hitSlop={12}>
@@ -42,17 +45,18 @@ export function ChampionshipHeader({ championship, onSharePress }: ChampionshipH
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    backgroundColor: colors.card,
-  },
-  info: {
-    flex: 1,
-    gap: 4,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    container: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.md,
+      paddingHorizontal: spacing.lg,
+      paddingVertical: spacing.md,
+      backgroundColor: colors.card,
+    },
+    info: {
+      flex: 1,
+      gap: 4,
+    },
+  });

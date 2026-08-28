@@ -9,10 +9,12 @@ import { useTeams } from '@/hooks/useTeams';
 import { usePlayersByChampionship } from '@/hooks/usePlayers';
 import { useChampionshipRole } from '@/hooks/useChampionshipRole';
 import { PLAYER_POSITION_SHORT } from '@/types/domain';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 export default function PlayersScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const championship = useChampionship(id);
   const teams = useTeams(id);
   const players = usePlayersByChampionship(id);
@@ -100,34 +102,35 @@ export default function PlayersScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  container: {
-    padding: spacing.xl,
-    gap: spacing.lg,
-    paddingBottom: spacing.xxl * 2,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  list: {
-    gap: spacing.lg,
-  },
-  teamSection: {
-    gap: spacing.sm,
-  },
-  playerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  playerInfo: {
-    flex: 1,
-    gap: 2,
-  },
-  muted: {
-    color: colors.textSecondary,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    container: {
+      padding: spacing.xl,
+      gap: spacing.lg,
+      paddingBottom: spacing.xxl * 2,
+    },
+    headerRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    list: {
+      gap: spacing.lg,
+    },
+    teamSection: {
+      gap: spacing.sm,
+    },
+    playerRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.md,
+    },
+    playerInfo: {
+      flex: 1,
+      gap: 2,
+    },
+    muted: {
+      color: colors.textSecondary,
+    },
+  });

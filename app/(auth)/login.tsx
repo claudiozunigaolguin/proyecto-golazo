@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, router } from 'expo-router';
 import {
   KeyboardAvoidingView,
@@ -12,9 +12,11 @@ import { Button, TextField } from '@/components/ui';
 import { Logo } from '@/components/golazo';
 import { useAuthStore } from '@/store/authStore';
 import { loginSchema } from '@/lib/validations';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 export default function LoginScreen() {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const signIn = useAuthStore((s) => s.signIn);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -88,36 +90,37 @@ export default function LoginScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  container: {
-    flexGrow: 1,
-    padding: spacing.xl,
-    justifyContent: 'center',
-    gap: spacing.xxl,
-  },
-  header: {
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  tagline: {
-    color: colors.textSecondary,
-  },
-  form: {
-    gap: spacing.lg,
-  },
-  error: {
-    color: colors.danger,
-  },
-  link: {
-    alignSelf: 'center',
-    marginTop: spacing.sm,
-  },
-  linkText: {
-    color: colors.primary,
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    container: {
+      flexGrow: 1,
+      padding: spacing.xl,
+      justifyContent: 'center',
+      gap: spacing.xxl,
+    },
+    header: {
+      alignItems: 'center',
+      gap: spacing.sm,
+    },
+    tagline: {
+      color: colors.textSecondary,
+    },
+    form: {
+      gap: spacing.lg,
+    },
+    error: {
+      color: colors.danger,
+    },
+    link: {
+      alignSelf: 'center',
+      marginTop: spacing.sm,
+    },
+    linkText: {
+      color: colors.primary,
+    },
+    footer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+    },
+  });

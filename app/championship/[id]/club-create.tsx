@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { Image } from 'expo-image';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -10,12 +10,14 @@ import { updateClub as updateClubApi } from '@/api/clubs';
 import { clubSchema } from '@/lib/validations';
 import { pickImage, teamLogoPath, uploadImage } from '@/lib/storage';
 import type { ImagePickerAsset } from 'expo-image-picker';
-import { colors, radius, spacing, typography } from '@/theme';
+import { useColors, radius, spacing, typography, type ColorPalette } from '@/theme';
 
 const COLOR_SWATCHES = ['#0B7A3B', '#E5484D', '#2E7BE0', '#F5A524', '#7C3AED', '#14181A'];
 
 export default function CreateClubScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const championshipId = id as string;
   const createClub = useCreateClub(championshipId);
   const queryClient = useQueryClient();
@@ -112,51 +114,52 @@ export default function CreateClubScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  container: {
-    padding: spacing.xl,
-    gap: spacing.lg,
-  },
-  notice: {
-    color: colors.warning,
-  },
-  logoPicker: {
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  logoPreview: {
-    width: 72,
-    height: 72,
-    borderRadius: radius.lg,
-  },
-  logoPlaceholder: {
-    backgroundColor: colors.primaryLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  logoLabel: {
-    color: colors.primary,
-    fontWeight: '700',
-  },
-  colorSection: {
-    gap: spacing.sm,
-  },
-  swatchRow: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-  },
-  swatch: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-  swatchActive: {
-    borderColor: colors.textPrimary,
-  },
-  error: {
-    color: colors.danger,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    container: {
+      padding: spacing.xl,
+      gap: spacing.lg,
+    },
+    notice: {
+      color: colors.warning,
+    },
+    logoPicker: {
+      alignItems: 'center',
+      gap: spacing.xs,
+    },
+    logoPreview: {
+      width: 72,
+      height: 72,
+      borderRadius: radius.lg,
+    },
+    logoPlaceholder: {
+      backgroundColor: colors.primaryLight,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    logoLabel: {
+      color: colors.primary,
+      fontWeight: '700',
+    },
+    colorSection: {
+      gap: spacing.sm,
+    },
+    swatchRow: {
+      flexDirection: 'row',
+      gap: spacing.sm,
+    },
+    swatch: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      borderWidth: 2,
+      borderColor: 'transparent',
+    },
+    swatchActive: {
+      borderColor: colors.textPrimary,
+    },
+    error: {
+      color: colors.danger,
+    },
+  });

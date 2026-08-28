@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
@@ -11,10 +11,12 @@ import { useUpdateAthlete, useRevealAthleteRut } from '@/hooks/useAthletes';
 import { useChampionshipRole } from '@/hooks/useChampionshipRole';
 import { pickAndUploadImage, athletePhotoPath } from '@/lib/storage';
 import { getPublicPlayerUrl, shareText } from '@/lib/share';
-import { colors, radius, spacing, typography } from '@/theme';
+import { useColors, radius, spacing, typography, type ColorPalette } from '@/theme';
 
 export default function PlayerDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const player = usePlayer(id);
   const team = useTeam(player.data?.team_id);
   const stats = usePlayerStats(id);
@@ -122,28 +124,29 @@ export default function PlayerDetailScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  container: {
-    padding: spacing.xl,
-    gap: spacing.lg,
-  },
-  section: {
-    gap: spacing.sm,
-  },
-  qrCard: {
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  qrWrap: {
-    padding: spacing.md,
-    backgroundColor: colors.card,
-    borderRadius: radius.lg,
-  },
-  muted: {
-    color: colors.textSecondary,
-  },
-  enrollmentRow: {
-    gap: 2,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    container: {
+      padding: spacing.xl,
+      gap: spacing.lg,
+    },
+    section: {
+      gap: spacing.sm,
+    },
+    qrCard: {
+      alignItems: 'center',
+      gap: spacing.sm,
+    },
+    qrWrap: {
+      padding: spacing.md,
+      backgroundColor: colors.card,
+      borderRadius: radius.lg,
+    },
+    muted: {
+      color: colors.textSecondary,
+    },
+    enrollmentRow: {
+      gap: 2,
+    },
+  });

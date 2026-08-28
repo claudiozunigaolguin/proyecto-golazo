@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { ActivityIndicator, Alert, Pressable, StyleSheet, View } from 'react-native';
 import { Avatar } from '@/components/ui';
-import { colors } from '@/theme';
+import { useColors, type ColorPalette } from '@/theme';
 
 interface EditableAvatarProps {
   uri?: string | null;
@@ -21,6 +21,8 @@ export function EditableAvatar({
   onPick,
   onUploaded,
 }: EditableAvatarProps) {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const [uploading, setUploading] = useState(false);
 
   const handlePress = async () => {
@@ -51,15 +53,16 @@ export function EditableAvatar({
   );
 }
 
-const styles = StyleSheet.create({
-  badge: {
-    position: 'absolute',
-    right: -2,
-    bottom: -2,
-    backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: colors.background,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    badge: {
+      position: 'absolute',
+      right: -2,
+      bottom: -2,
+      backgroundColor: colors.primary,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderWidth: 2,
+      borderColor: colors.background,
+    },
+  });

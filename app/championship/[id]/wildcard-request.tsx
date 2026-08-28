@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { ScrollView, StyleSheet, Text } from 'react-native';
 import { Button, SegmentedOptions, TextField } from '@/components/ui';
@@ -7,10 +7,12 @@ import { usePlayersByTeam } from '@/hooks/usePlayers';
 import { useCreateWildcardRequest } from '@/hooks/useWildcardRequests';
 import { useAuthStore } from '@/store/authStore';
 import { wildcardRequestSchema } from '@/lib/validations';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 export default function WildcardRequestScreen() {
   const { id, teamId: teamIdParam } = useLocalSearchParams<{ id: string; teamId?: string }>();
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const championshipId = id as string;
   const userId = useAuthStore((s) => s.session?.user.id);
   const teams = useTeams(id);
@@ -98,16 +100,17 @@ export default function WildcardRequestScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  container: {
-    padding: spacing.xl,
-    gap: spacing.lg,
-  },
-  notice: {
-    color: colors.textSecondary,
-  },
-  error: {
-    color: colors.danger,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    container: {
+      padding: spacing.xl,
+      gap: spacing.lg,
+    },
+    notice: {
+      color: colors.textSecondary,
+    },
+    error: {
+      color: colors.danger,
+    },
+  });

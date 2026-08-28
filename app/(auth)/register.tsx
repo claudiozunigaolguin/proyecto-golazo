@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, router } from 'expo-router';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Button, TextField } from '@/components/ui';
 import { Logo } from '@/components/golazo';
 import { useAuthStore } from '@/store/authStore';
 import { registerSchema } from '@/lib/validations';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 export default function RegisterScreen() {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const signUp = useAuthStore((s) => s.signUp);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -98,50 +100,51 @@ export default function RegisterScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  flex1: { flex: 1 },
-  container: {
-    flexGrow: 1,
-    padding: spacing.xl,
-    justifyContent: 'center',
-    gap: spacing.xxl,
-  },
-  header: {
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  form: {
-    gap: spacing.lg,
-  },
-  row: {
-    flexDirection: 'row',
-    gap: spacing.md,
-  },
-  error: {
-    color: colors.danger,
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  linkText: {
-    color: colors.primary,
-  },
-  confirmContainer: {
-    flex: 1,
-    backgroundColor: colors.background,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: spacing.xl,
-    gap: spacing.md,
-  },
-  confirmEmoji: {
-    fontSize: 48,
-  },
-  confirmText: {
-    textAlign: 'center',
-    color: colors.textSecondary,
-    marginBottom: spacing.lg,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    flex1: { flex: 1 },
+    container: {
+      flexGrow: 1,
+      padding: spacing.xl,
+      justifyContent: 'center',
+      gap: spacing.xxl,
+    },
+    header: {
+      alignItems: 'center',
+      gap: spacing.sm,
+    },
+    form: {
+      gap: spacing.lg,
+    },
+    row: {
+      flexDirection: 'row',
+      gap: spacing.md,
+    },
+    error: {
+      color: colors.danger,
+    },
+    footer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+    },
+    linkText: {
+      color: colors.primary,
+    },
+    confirmContainer: {
+      flex: 1,
+      backgroundColor: colors.background,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: spacing.xl,
+      gap: spacing.md,
+    },
+    confirmEmoji: {
+      fontSize: 48,
+    },
+    confirmText: {
+      textAlign: 'center',
+      color: colors.textSecondary,
+      marginBottom: spacing.lg,
+    },
+  });

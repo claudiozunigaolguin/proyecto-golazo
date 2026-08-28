@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
@@ -9,7 +9,7 @@ import {
   type ShareCardData,
   type ShareCardFormat,
 } from '@/types/domain';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 const FORMAT_OPTIONS: { value: ShareCardFormat; label: string }[] = (
   Object.keys(SHARE_CARD_FORMAT_LABEL) as ShareCardFormat[]
@@ -17,12 +17,14 @@ const FORMAT_OPTIONS: { value: ShareCardFormat; label: string }[] = (
 
 /**
  * Ruta nativa (iOS/Android), sin poder probarse en un dispositivo real
- * todavía: captura el ShareCardPreview (RN plano, sin escudos/marca) tal
- * cual se ve en pantalla — el selector de formato queda visible pero no
- * afecta el tamaño de la captura (limitación conocida, se ajusta cuando
- * exista un build real para probar).
+ * todavía: captura el ShareCardPreview (RN plano, sin escudos/marca, con
+ * paleta fija — ver ShareCardPreview.tsx) tal cual se ve en pantalla — el
+ * selector de formato queda visible pero no afecta el tamaño de la captura
+ * (limitación conocida, se ajusta cuando exista un build real para probar).
  */
 export function ShareCardGenerator({ data }: { data: ShareCardData }) {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const [format, setFormat] = useState<ShareCardFormat>('story');
   const [error, setError] = useState<string | null>(null);
   const [sharing, setSharing] = useState(false);
@@ -60,11 +62,12 @@ export function ShareCardGenerator({ data }: { data: ShareCardData }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    gap: spacing.lg,
-  },
-  error: {
-    color: colors.danger,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    container: {
+      gap: spacing.lg,
+    },
+    error: {
+      color: colors.danger,
+    },
+  });

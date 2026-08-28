@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { Button, TextField } from '@/components/ui';
@@ -6,10 +6,12 @@ import { LoadingState } from '@/components/ui/Skeleton';
 import { EditableAvatar } from '@/components/golazo';
 import { useChampionship, useUpdateChampionship } from '@/hooks/useChampionships';
 import { pickAndUploadImage, championshipLogoPath } from '@/lib/storage';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 export default function EditChampionshipScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const championship = useChampionship(id);
   const updateChampionship = useUpdateChampionship(id as string);
 
@@ -120,31 +122,32 @@ export default function EditChampionshipScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  flex1: { flex: 1 },
-  muted: {
-    color: colors.textSecondary,
-  },
-  logoRow: {
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  container: {
-    padding: spacing.xl,
-    gap: spacing.lg,
-    paddingBottom: spacing.xxl * 2,
-  },
-  row: {
-    flexDirection: 'row',
-    gap: spacing.md,
-  },
-  switchRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  error: {
-    color: colors.danger,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    flex1: { flex: 1 },
+    muted: {
+      color: colors.textSecondary,
+    },
+    logoRow: {
+      alignItems: 'center',
+      gap: spacing.xs,
+    },
+    container: {
+      padding: spacing.xl,
+      gap: spacing.lg,
+      paddingBottom: spacing.xxl * 2,
+    },
+    row: {
+      flexDirection: 'row',
+      gap: spacing.md,
+    },
+    switchRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    error: {
+      color: colors.danger,
+    },
+  });

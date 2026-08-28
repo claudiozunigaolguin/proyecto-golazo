@@ -1,7 +1,8 @@
+import { useMemo } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { TeamLogo } from './TeamLogo';
 import type { StandingRow } from '@/types/domain';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 interface StandingTableProps {
   rows: StandingRow[];
@@ -13,6 +14,8 @@ interface StandingTableProps {
 const COL_WIDTH = 32;
 
 export function StandingTable({ rows, onTeamPress, qualifyCount = 0 }: StandingTableProps) {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
       <View>
@@ -71,44 +74,45 @@ export function StandingTable({ rows, onTeamPress, qualifyCount = 0 }: StandingT
   );
 }
 
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.xs,
-  },
-  headerRow: {
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  qualifyRow: {
-    borderLeftWidth: 3,
-    borderLeftColor: colors.primary,
-  },
-  qualifyPos: {
-    color: colors.primary,
-    fontWeight: '800',
-  },
-  headerText: {
-    ...typography.small,
-    color: colors.textMuted,
-  },
-  pos: {
-    width: 24,
-    textAlign: 'center',
-  },
-  teamCol: {
-    width: 160,
-    paddingLeft: spacing.sm,
-  },
-  teamCell: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  col: {
-    width: COL_WIDTH,
-    textAlign: 'center',
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: spacing.sm,
+      paddingHorizontal: spacing.xs,
+    },
+    headerRow: {
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    qualifyRow: {
+      borderLeftWidth: 3,
+      borderLeftColor: colors.primary,
+    },
+    qualifyPos: {
+      color: colors.primary,
+      fontWeight: '800',
+    },
+    headerText: {
+      ...typography.small,
+      color: colors.textMuted,
+    },
+    pos: {
+      width: 24,
+      textAlign: 'center',
+    },
+    teamCol: {
+      width: 160,
+      paddingLeft: spacing.sm,
+    },
+    teamCell: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.sm,
+    },
+    col: {
+      width: COL_WIDTH,
+      textAlign: 'center',
+    },
+  });

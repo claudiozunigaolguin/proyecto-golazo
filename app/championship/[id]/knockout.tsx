@@ -15,10 +15,12 @@ import {
 } from '@/hooks/useKnockout';
 import { confirmAction } from '@/lib/confirm';
 import type { KnockoutMatch } from '@/api/knockout';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 export default function KnockoutStageScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const championshipId = id as string;
   const championship = useChampionship(id);
   const teams = useTeams(id);
@@ -131,6 +133,8 @@ interface BracketMatchRowProps {
 }
 
 function BracketMatchRow({ match, homeTeam, awayTeam, onPress }: BracketMatchRowProps) {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const hasScore = match.status === 'finished' && match.home_score !== null && match.away_score !== null;
   return (
     <Pressable onPress={onPress} disabled={!onPress}>
@@ -169,46 +173,47 @@ function BracketMatchRow({ match, homeTeam, awayTeam, onPress }: BracketMatchRow
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  container: {
-    padding: spacing.xl,
-    gap: spacing.lg,
-    paddingBottom: spacing.xxl * 2,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  list: {
-    gap: spacing.xl,
-  },
-  roundSection: {
-    gap: spacing.md,
-  },
-  matchCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  matchTeam: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  matchTeamRight: {
-    justifyContent: 'flex-end',
-  },
-  tbd: {
-    color: colors.textMuted,
-    fontStyle: 'italic',
-  },
-  score: {
-    fontSize: 18,
-    fontWeight: '800',
-    color: colors.textPrimary,
-    paddingHorizontal: spacing.sm,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    container: {
+      padding: spacing.xl,
+      gap: spacing.lg,
+      paddingBottom: spacing.xxl * 2,
+    },
+    headerRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    list: {
+      gap: spacing.xl,
+    },
+    roundSection: {
+      gap: spacing.md,
+    },
+    matchCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.sm,
+    },
+    matchTeam: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.sm,
+    },
+    matchTeamRight: {
+      justifyContent: 'flex-end',
+    },
+    tbd: {
+      color: colors.textMuted,
+      fontStyle: 'italic',
+    },
+    score: {
+      fontSize: 18,
+      fontWeight: '800',
+      color: colors.textPrimary,
+      paddingHorizontal: spacing.sm,
+    },
+  });

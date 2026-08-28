@@ -9,7 +9,7 @@ import { useTeams } from '@/hooks/useTeams';
 import { useMatches } from '@/hooks/useMatches';
 import { useRounds } from '@/hooks/useFixture';
 import type { MatchStatus } from '@/types/domain';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 type Filter = 'all' | MatchStatus;
 
@@ -22,6 +22,8 @@ const FILTERS: { value: Filter; label: string }[] = [
 
 export default function MatchesScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const championship = useChampionship(id);
   const teams = useTeams(id);
   const rounds = useRounds(id);
@@ -74,14 +76,15 @@ export default function MatchesScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  container: {
-    padding: spacing.xl,
-    gap: spacing.lg,
-    paddingBottom: spacing.xxl * 2,
-  },
-  list: {
-    gap: spacing.md,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    container: {
+      padding: spacing.xl,
+      gap: spacing.lg,
+      paddingBottom: spacing.xxl * 2,
+    },
+    list: {
+      gap: spacing.md,
+    },
+  });

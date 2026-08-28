@@ -1,7 +1,8 @@
+import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Avatar } from '@/components/ui';
 import { PLAYER_POSITION_SHORT, type PlayerPosition } from '@/types/domain';
-import { colors, radius, spacing, typography } from '@/theme';
+import { useColors, radius, spacing, typography, type ColorPalette } from '@/theme';
 
 interface PlayerCardStats {
   matches: number;
@@ -30,6 +31,8 @@ export function PlayerCard({
   teamName,
   stats,
 }: PlayerCardProps) {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const fullName = `${firstName} ${lastName}`;
 
   return (
@@ -64,6 +67,8 @@ export function PlayerCard({
 }
 
 function StatItem({ label, value }: { label: string; value: number }) {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <View style={styles.statItem}>
       <Text style={styles.statValue}>{value}</Text>
@@ -72,64 +77,65 @@ function StatItem({ label, value }: { label: string; value: number }) {
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.primary,
-    borderRadius: radius.xl,
-    padding: spacing.xl,
-    gap: spacing.xl,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.lg,
-  },
-  headerInfo: {
-    flex: 1,
-    gap: 2,
-  },
-  name: {
-    ...typography.h2,
-    color: colors.textInverse,
-  },
-  team: {
-    ...typography.body,
-    color: 'rgba(255,255,255,0.85)',
-  },
-  badgeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    marginTop: spacing.xs,
-  },
-  positionBadge: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    borderRadius: radius.pill,
-    paddingVertical: 2,
-    paddingHorizontal: spacing.sm,
-  },
-  positionText: {
-    ...typography.small,
-    color: colors.textInverse,
-  },
-  number: {
-    ...typography.h3,
-    color: colors.textInverse,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  statItem: {
-    alignItems: 'center',
-    gap: 2,
-  },
-  statValue: {
-    ...typography.stat,
-    color: colors.textInverse,
-  },
-  statLabel: {
-    ...typography.small,
-    color: 'rgba(255,255,255,0.8)',
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    card: {
+      backgroundColor: colors.primary,
+      borderRadius: radius.xl,
+      padding: spacing.xl,
+      gap: spacing.xl,
+    },
+    headerRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.lg,
+    },
+    headerInfo: {
+      flex: 1,
+      gap: 2,
+    },
+    name: {
+      ...typography.h2,
+      color: colors.textInverse,
+    },
+    team: {
+      ...typography.body,
+      color: 'rgba(255,255,255,0.85)',
+    },
+    badgeRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.sm,
+      marginTop: spacing.xs,
+    },
+    positionBadge: {
+      backgroundColor: 'rgba(255,255,255,0.2)',
+      borderRadius: radius.pill,
+      paddingVertical: 2,
+      paddingHorizontal: spacing.sm,
+    },
+    positionText: {
+      ...typography.small,
+      color: colors.textInverse,
+    },
+    number: {
+      ...typography.h3,
+      color: colors.textInverse,
+    },
+    statsRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    statItem: {
+      alignItems: 'center',
+      gap: 2,
+    },
+    statValue: {
+      ...typography.stat,
+      color: colors.textInverse,
+    },
+    statLabel: {
+      ...typography.small,
+      color: 'rgba(255,255,255,0.8)',
+    },
+  });

@@ -10,10 +10,12 @@ import { useMatches } from '@/hooks/useMatches';
 import { useClearFixture, useGenerateFixture, useRounds } from '@/hooks/useFixture';
 import { useChampionshipRole } from '@/hooks/useChampionshipRole';
 import { confirmAction } from '@/lib/confirm';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 export default function FixtureScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const championshipId = id as string;
   const championship = useChampionship(id);
   const teams = useTeams(id);
@@ -128,22 +130,23 @@ export default function FixtureScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  container: {
-    padding: spacing.xl,
-    gap: spacing.lg,
-    paddingBottom: spacing.xxl * 2,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  list: {
-    gap: spacing.xl,
-  },
-  roundSection: {
-    gap: spacing.md,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    container: {
+      padding: spacing.xl,
+      gap: spacing.lg,
+      paddingBottom: spacing.xxl * 2,
+    },
+    headerRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    list: {
+      gap: spacing.xl,
+    },
+    roundSection: {
+      gap: spacing.md,
+    },
+  });

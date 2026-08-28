@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Stack } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Badge, Button, Card } from '@/components/ui';
@@ -6,7 +6,7 @@ import { LoadingState } from '@/components/ui/Skeleton';
 import { useMyBillingStatus } from '@/hooks/useBilling';
 import { createCheckoutSession } from '@/api/checkout';
 import { PLAN_LABEL, PLAN_LIMIT, PLAN_PRICE_USD, type UserPlan } from '@/types/domain';
-import { colors, radius, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 const PAID_PLANS: UserPlan[] = ['starter', 'growth', 'unlimited'];
 
@@ -16,6 +16,8 @@ function planDescription(plan: UserPlan): string {
 }
 
 export default function UpgradeScreen() {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const billing = useMyBillingStatus();
   const [loadingPlan, setLoadingPlan] = useState<UserPlan | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -92,33 +94,34 @@ export default function UpgradeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
-  container: {
-    padding: spacing.xl,
-    gap: spacing.xl,
-    paddingBottom: spacing.xxl * 2,
-  },
-  muted: {
-    color: colors.textSecondary,
-  },
-  list: {
-    gap: spacing.md,
-  },
-  planCard: {
-    gap: spacing.sm,
-  },
-  planHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  price: {
-    fontSize: 28,
-    fontWeight: '800',
-    color: colors.primary,
-  },
-  error: {
-    color: colors.danger,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
+    container: {
+      padding: spacing.xl,
+      gap: spacing.xl,
+      paddingBottom: spacing.xxl * 2,
+    },
+    muted: {
+      color: colors.textSecondary,
+    },
+    list: {
+      gap: spacing.md,
+    },
+    planCard: {
+      gap: spacing.sm,
+    },
+    planHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    price: {
+      fontSize: 28,
+      fontWeight: '800',
+      color: colors.primary,
+    },
+    error: {
+      color: colors.danger,
+    },
+  });

@@ -1,6 +1,7 @@
+import { useMemo } from 'react';
 import { router } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text } from 'react-native';
-import { colors, radius, spacing, typography } from '@/theme';
+import { useColors, radius, spacing, typography, type ColorPalette } from '@/theme';
 
 export type ChampionshipTabKey =
   | 'resumen'
@@ -35,6 +36,8 @@ interface ChampionshipTabBarProps {
 }
 
 export function ChampionshipTabBar({ championshipId, active }: ChampionshipTabBarProps) {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <ScrollView
       horizontal
@@ -60,32 +63,33 @@ export function ChampionshipTabBar({ championshipId, active }: ChampionshipTabBa
   );
 }
 
-const styles = StyleSheet.create({
-  wrap: {
-    flexGrow: 0,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-    backgroundColor: colors.card,
-  },
-  content: {
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-    gap: spacing.sm,
-  },
-  chip: {
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    borderRadius: radius.pill,
-    backgroundColor: colors.surface,
-  },
-  chipActive: {
-    backgroundColor: colors.primary,
-  },
-  text: {
-    color: colors.textSecondary,
-  },
-  textActive: {
-    color: colors.textInverse,
-    fontWeight: '700',
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    wrap: {
+      flexGrow: 0,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+      backgroundColor: colors.card,
+    },
+    content: {
+      paddingHorizontal: spacing.lg,
+      paddingVertical: spacing.sm,
+      gap: spacing.sm,
+    },
+    chip: {
+      paddingVertical: spacing.sm,
+      paddingHorizontal: spacing.md,
+      borderRadius: radius.pill,
+      backgroundColor: colors.surface,
+    },
+    chipActive: {
+      backgroundColor: colors.primary,
+    },
+    text: {
+      color: colors.textSecondary,
+    },
+    textActive: {
+      color: colors.textInverse,
+      fontWeight: '700',
+    },
+  });

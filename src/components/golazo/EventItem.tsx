@@ -1,6 +1,7 @@
+import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import type { MatchEventType } from '@/types/domain';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 interface EventItemProps {
   type: MatchEventType;
@@ -31,6 +32,8 @@ const EVENT_LABEL: Record<MatchEventType, string> = {
 };
 
 export function EventItem({ type, minute, playerName, relatedPlayerName, teamName }: EventItemProps) {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <View style={styles.row}>
       <Text style={styles.icon}>{EVENT_ICON[type]}</Text>
@@ -49,22 +52,23 @@ export function EventItem({ type, minute, playerName, relatedPlayerName, teamNam
   );
 }
 
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    paddingVertical: spacing.sm,
-  },
-  icon: {
-    fontSize: 20,
-    width: 28,
-    textAlign: 'center',
-  },
-  info: {
-    flex: 1,
-  },
-  meta: {
-    color: colors.textMuted,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.md,
+      paddingVertical: spacing.sm,
+    },
+    icon: {
+      fontSize: 20,
+      width: 28,
+      textAlign: 'center',
+    },
+    info: {
+      flex: 1,
+    },
+    meta: {
+      color: colors.textMuted,
+    },
+  });

@@ -1,6 +1,7 @@
+import { useMemo } from 'react';
 import { Image } from 'expo-image';
 import { StyleSheet, Text, View } from 'react-native';
-import { colors } from '@/theme';
+import { useColors, type ColorPalette } from '@/theme';
 
 interface AvatarProps {
   uri?: string | null;
@@ -16,7 +17,9 @@ function getInitials(name: string): string {
   return `${parts[0]![0]}${parts[parts.length - 1]![0]}`.toUpperCase();
 }
 
-export function Avatar({ uri, name, size = 40, backgroundColor = colors.primary }: AvatarProps) {
+export function Avatar({ uri, name, size = 40, backgroundColor }: AvatarProps) {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const dimension = { width: size, height: size, borderRadius: size / 2 };
 
   if (uri) {
@@ -24,19 +27,20 @@ export function Avatar({ uri, name, size = 40, backgroundColor = colors.primary 
   }
 
   return (
-    <View style={[styles.fallback, dimension, { backgroundColor }]}>
+    <View style={[styles.fallback, dimension, { backgroundColor: backgroundColor ?? colors.primary }]}>
       <Text style={[styles.initials, { fontSize: size * 0.38 }]}>{getInitials(name)}</Text>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  fallback: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  initials: {
-    color: colors.textInverse,
-    fontWeight: '700',
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    fallback: {
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    initials: {
+      color: colors.textInverse,
+      fontWeight: '700',
+    },
+  });

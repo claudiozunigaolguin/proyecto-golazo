@@ -1,6 +1,7 @@
+import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Avatar, Card, EmptyState } from '@/components/ui';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 export interface RankingRow {
   id: string;
@@ -20,6 +21,9 @@ interface TopScorersListProps {
 const MEDAL_COLORS = ['#F5C518', '#C0C0C0', '#CD7F32'];
 
 export function TopScorersList({ rows, emptyTitle, emptyDescription }: TopScorersListProps) {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+
   if (rows.length === 0) {
     return <EmptyState icon="trophy-outline" title={emptyTitle} description={emptyDescription} />;
   }
@@ -50,38 +54,39 @@ export function TopScorersList({ rows, emptyTitle, emptyDescription }: TopScorer
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    padding: 0,
-    overflow: 'hidden',
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    padding: spacing.md,
-  },
-  rowBorder: {
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-  },
-  rank: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.surfaceAlt,
-  },
-  info: {
-    flex: 1,
-  },
-  team: {
-    color: colors.textMuted,
-  },
-  value: {
-    fontSize: 20,
-    fontWeight: '800',
-    color: colors.primary,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    card: {
+      padding: 0,
+      overflow: 'hidden',
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.md,
+      padding: spacing.md,
+    },
+    rowBorder: {
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+    },
+    rank: {
+      width: 24,
+      height: 24,
+      borderRadius: 12,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.surfaceAlt,
+    },
+    info: {
+      flex: 1,
+    },
+    team: {
+      color: colors.textMuted,
+    },
+    value: {
+      fontSize: 20,
+      fontWeight: '800',
+      color: colors.primary,
+    },
+  });

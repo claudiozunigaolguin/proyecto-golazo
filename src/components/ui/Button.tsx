@@ -1,5 +1,6 @@
+import { useMemo } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View, ViewStyle } from 'react-native';
-import { colors, radius, spacing, typography } from '@/theme';
+import { useColors, radius, spacing, typography, type ColorPalette } from '@/theme';
 
 type Variant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
 type Size = 'sm' | 'md' | 'lg';
@@ -16,13 +17,15 @@ interface ButtonProps {
   style?: ViewStyle;
 }
 
-const VARIANT_STYLES: Record<Variant, { bg: string; text: string; border?: string }> = {
-  primary: { bg: colors.primary, text: colors.textInverse },
-  secondary: { bg: colors.primaryLight, text: colors.primary },
-  outline: { bg: 'transparent', text: colors.primary, border: colors.primary },
-  ghost: { bg: 'transparent', text: colors.textPrimary },
-  danger: { bg: colors.danger, text: colors.textInverse },
-};
+function variantStyles(colors: ColorPalette): Record<Variant, { bg: string; text: string; border?: string }> {
+  return {
+    primary: { bg: colors.primary, text: colors.textInverse },
+    secondary: { bg: colors.primaryLight, text: colors.primary },
+    outline: { bg: 'transparent', text: colors.primary, border: colors.primary },
+    ghost: { bg: 'transparent', text: colors.textPrimary },
+    danger: { bg: colors.danger, text: colors.textInverse },
+  };
+}
 
 const SIZE_STYLES: Record<Size, { paddingVertical: number; paddingHorizontal: number; fontSize: number }> = {
   sm: { paddingVertical: spacing.sm, paddingHorizontal: spacing.md, fontSize: 13 },
@@ -41,7 +44,9 @@ export function Button({
   fullWidth,
   style,
 }: ButtonProps) {
-  const v = VARIANT_STYLES[variant];
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+  const v = variantStyles(colors)[variant];
   const s = SIZE_STYLES[size];
   const isDisabled = disabled || loading;
 
@@ -78,22 +83,23 @@ export function Button({
   );
 }
 
-const styles = StyleSheet.create({
-  base: {
-    borderRadius: radius.pill,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  content: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  primaryShadow: {
-    shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    base: {
+      borderRadius: radius.pill,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    content: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.sm,
+    },
+    primaryShadow: {
+      shadowColor: colors.primary,
+      shadowOffset: { width: 0, height: 3 },
+      shadowOpacity: 0.25,
+      shadowRadius: 8,
+      elevation: 3,
+    },
+  });

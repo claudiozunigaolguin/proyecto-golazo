@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { router } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Avatar, Badge, Button, Card, TextField } from '@/components/ui';
+import { Avatar, Badge, Button, Card, TextField, ThemeToggle } from '@/components/ui';
 import { LoadingState } from '@/components/ui/Skeleton';
 import { TournamentCard } from '@/components/golazo';
 import { useAuthStore } from '@/store/authStore';
@@ -9,9 +9,11 @@ import { useMyChampionships } from '@/hooks/useChampionships';
 import { useMyBillingStatus } from '@/hooks/useBilling';
 import { updateProfile } from '@/api/profile';
 import { PLAN_LABEL } from '@/types/domain';
-import { colors, spacing, typography } from '@/theme';
+import { useColors, spacing, typography, type ColorPalette } from '@/theme';
 
 export default function ProfileScreen() {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const profile = useAuthStore((s) => s.profile);
   const session = useAuthStore((s) => s.session);
   const signOut = useAuthStore((s) => s.signOut);
@@ -119,12 +121,16 @@ export default function ProfileScreen() {
         )}
       </View>
 
+      <Card>
+        <ThemeToggle />
+      </Card>
+
       <Button label="Cerrar sesión" variant="danger" onPress={() => void signOut()} fullWidth />
     </ScrollView>
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ColorPalette) => StyleSheet.create({
   flex: { flex: 1, backgroundColor: colors.background },
   container: {
     padding: spacing.xl,

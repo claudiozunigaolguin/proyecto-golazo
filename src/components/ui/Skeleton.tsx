@@ -1,6 +1,6 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Animated, StyleSheet, View, ViewStyle } from 'react-native';
-import { colors, radius, spacing } from '@/theme';
+import { useColors, radius, spacing, type ColorPalette } from '@/theme';
 
 interface SkeletonProps {
   width?: number | `${number}%`;
@@ -9,6 +9,8 @@ interface SkeletonProps {
 }
 
 export function Skeleton({ width = '100%', height = 16, style }: SkeletonProps) {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const opacity = useRef(new Animated.Value(0.4)).current;
 
   useEffect(() => {
@@ -30,6 +32,8 @@ export function Skeleton({ width = '100%', height = 16, style }: SkeletonProps) 
 }
 
 export function LoadingState({ rows = 3 }: { rows?: number }) {
+  const colors = useColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <View style={styles.container}>
       {Array.from({ length: rows }).map((_, i) => (
@@ -39,15 +43,16 @@ export function LoadingState({ rows = 3 }: { rows?: number }) {
   );
 }
 
-const styles = StyleSheet.create({
-  base: {
-    backgroundColor: colors.surfaceAlt,
-    borderRadius: radius.md,
-  },
-  container: {
-    gap: spacing.md,
-  },
-  row: {
-    borderRadius: radius.lg,
-  },
-});
+const createStyles = (colors: ColorPalette) =>
+  StyleSheet.create({
+    base: {
+      backgroundColor: colors.surfaceAlt,
+      borderRadius: radius.md,
+    },
+    container: {
+      gap: spacing.md,
+    },
+    row: {
+      borderRadius: radius.lg,
+    },
+  });
