@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { useMemo, useRef } from 'react';
+import { ActivityIndicator, Animated, Pressable, StyleSheet, Text, View, ViewStyle } from 'react-native';
 import { useColors, radius, spacing, typography, type ColorPalette } from '@/theme';
 
 type Variant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
@@ -49,36 +49,50 @@ export function Button({
   const v = variantStyles(colors)[variant];
   const s = SIZE_STYLES[size];
   const isDisabled = disabled || loading;
+  const scale = useRef(new Animated.Value(1)).current;
+
+  const animateTo = (toValue: number) =>
+    Animated.spring(scale, { toValue, useNativeDriver: true, speed: 40, bounciness: 10 }).start();
 
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityState={{ disabled: isDisabled }}
       onPress={onPress}
+      onPressIn={() => animateTo(0.96)}
+      onPressOut={() => animateTo(1)}
       disabled={isDisabled}
       style={({ pressed }) => [
-        styles.base,
         {
-          backgroundColor: v.bg,
-          borderColor: v.border ?? 'transparent',
-          borderWidth: v.border ? 1 : 0,
-          paddingVertical: s.paddingVertical,
-          paddingHorizontal: s.paddingHorizontal,
-          opacity: isDisabled ? 0.6 : pressed ? 0.85 : 1,
           alignSelf: fullWidth ? 'stretch' : 'flex-start',
-          ...(variant === 'primary' ? styles.primaryShadow : null),
+          opacity: isDisabled ? 0.6 : pressed ? 0.85 : 1,
         },
-        style,
       ]}
     >
-      {loading ? (
-        <ActivityIndicator color={v.text} />
-      ) : (
-        <View style={styles.content}>
-          {icon}
-          <Text style={[typography.bodyBold, { color: v.text, fontSize: s.fontSize }]}>{label}</Text>
-        </View>
-      )}
+      <Animated.View
+        style={[
+          styles.base,
+          {
+            backgroundColor: v.bg,
+            borderColor: v.border ?? 'transparent',
+            borderWidth: v.border ? 1 : 0,
+            paddingVertical: s.paddingVertical,
+            paddingHorizontal: s.paddingHorizontal,
+            transform: [{ scale }],
+            ...(variant === 'primary' ? styles.primaryShadow : null),
+          },
+          style,
+        ]}
+      >
+        {loading ? (
+          <ActivityIndicator color={v.text} />
+        ) : (
+          <View style={styles.content}>
+            {icon}
+            <Text style={[typography.bodyBold, { color: v.text, fontSize: s.fontSize }]}>{label}</Text>
+          </View>
+        )}
+      </Animated.View>
     </Pressable>
   );
 }

@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import { Avatar, Card, EmptyState } from '@/components/ui';
 import { LoadingState } from '@/components/ui/Skeleton';
@@ -45,9 +46,14 @@ export default function PublicPlayerScreen() {
 
   return (
     <ScrollView style={styles.flex} contentContainerStyle={styles.container}>
-      <View style={styles.brandRow}>
+      <Pressable
+        onPress={() => router.replace('/')}
+        style={({ pressed }) => [styles.brandRow, { opacity: pressed ? 0.7 : 1 }]}
+        hitSlop={8}
+      >
+        <Ionicons name="chevron-back" size={18} color={colors.textSecondary} />
         <Logo size="sm" />
-      </View>
+      </Pressable>
 
       <View style={styles.header}>
         <Avatar uri={a.photo_url} name={`${a.first_name} ${a.last_name}`} size={88} />
@@ -96,7 +102,11 @@ const createStyles = (colors: ColorPalette) =>
       paddingBottom: spacing.xxl * 2,
     },
     brandRow: {
+      flexDirection: 'row',
       alignItems: 'center',
+      justifyContent: 'center',
+      gap: spacing.xs,
+      alignSelf: 'center',
     },
     header: {
       alignItems: 'center',
