@@ -50,7 +50,7 @@ export default function LoginScreen() {
         <View style={styles.header}>
           <Logo size="lg" />
           <Text style={[typography.body, styles.tagline]}>
-            Todo tu campeonato, en un solo lugar.
+            ⚽ Todo tu campeonato, en un solo lugar.
           </Text>
         </View>
 

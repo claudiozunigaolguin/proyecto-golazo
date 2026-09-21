@@ -40,7 +40,7 @@ export default function HomeScreen() {
 
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text style={typography.h2}>Mis campeonatos</Text>
+          <Text style={typography.h2}>🏆 Mis campeonatos</Text>
         </View>
 
         {myChampionships.isLoading ? (
@@ -72,7 +72,7 @@ export default function HomeScreen() {
       </View>
 
       <View style={styles.section}>
-        <Text style={typography.h2}>Campeonatos destacados</Text>
+        <Text style={typography.h2}>🔥 Campeonatos destacados</Text>
         <Text style={[typography.caption, styles.sectionSubtitle]}>
           El campeonato está que arde 🔥
         </Text>
